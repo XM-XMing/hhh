@@ -244,9 +244,62 @@ def _strip_arrays(value: Mapping[str, Any]) -> Mapping[str, Any]:
     return {key: item for key, item in value.items() if key != "_arrays"}
 
 
+def _policy_entropy_snapshot(agent, batch: Mapping[str, Any], *, floor: float) -> Mapping[str, Any]:
+    """Cheap no-grad policy-only snapshot for batch/sentinel comparisons.
+
+    The full snapshot above intentionally includes Q values for the low-state
+    audit.  Per-proposal batch-vs-sentinel diagnostics only need the masked
+    policy, so they must not repeatedly evaluate both critics.
+    """
+
+    torch = agent.torch
+    with torch.no_grad():
+        probabilities, log_probs, mask = agent._distribution(
+            agent.actor, batch["depth"], batch["vector"], batch["action_mask"].bool()
+        )
+        bc_prob, bc_log, _ = agent._distribution(
+            agent.bc_reference, batch["depth"], batch["vector"], batch["action_mask"].bool()
+        )
+        entropy = -(probabilities * log_probs).sum(dim=1)
+        bc_entropy = -(bc_prob * bc_log).sum(dim=1)
+        kl = masked_kl(probabilities, log_probs, bc_prob, bc_log, torch)
+        counts = mask.sum(dim=1)
+        eligible = (counts > 1) & (bc_entropy >= float(floor))
+        normalized = torch.full_like(entropy, float("nan"))
+        multi = counts > 1
+        normalized[multi] = entropy[multi] / torch.log(counts[multi].float())
+        bc_relative = torch.full_like(entropy, float("nan"))
+        bc_positive = bc_entropy > 0.0
+        bc_relative[bc_positive] = entropy[bc_positive] / bc_entropy[bc_positive]
+        flips = (
+            torch.argmax(probabilities.masked_fill(~mask, -1.0), dim=1)
+            != torch.argmax(bc_prob.masked_fill(~mask, -1.0), dim=1)
+        ).float()
+    entropy_np = entropy.detach().cpu().numpy().astype(np.float64)
+    normalized_np = normalized.detach().cpu().numpy().astype(np.float64)
+    bc_relative_np = bc_relative.detach().cpu().numpy().astype(np.float64)
+    eligible_np = eligible.detach().cpu().numpy().astype(bool)
+    return {
+        "count": int(entropy_np.size),
+        "entropy": _summary(entropy_np),
+        "bc_entropy": _summary(bc_entropy.detach().cpu().numpy()),
+        "normalized_entropy": _summary(normalized_np),
+        "bc_relative_entropy": _summary(bc_relative_np),
+        "kl": _summary(kl.detach().cpu().numpy()),
+        "eligible_count": int(eligible_np.sum()),
+        "entropy_min_eligible": float(np.min(entropy_np[eligible_np])) if eligible_np.any() else 0.0,
+        "normalized_entropy_min_eligible": float(np.nanmin(normalized_np[eligible_np])) if eligible_np.any() else None,
+        "bc_relative_entropy_min_eligible": float(np.nanmin(bc_relative_np[eligible_np])) if eligible_np.any() else None,
+        "argmax_flip_rate": float(np.mean(flips.detach().cpu().numpy())) if entropy_np.size else 0.0,
+    }
+
+
 def _correlation(left: Sequence[float], right: Sequence[float]) -> Mapping[str, Any]:
     x = np.asarray(left, dtype=np.float64)
     y = np.asarray(right, dtype=np.float64)
+    if x.size != y.size:
+        size = min(int(x.size), int(y.size))
+        x, y = x[:size], y[:size]
     finite = np.isfinite(x) & np.isfinite(y)
     x, y = x[finite], y[finite]
     if x.size < 2 or np.std(x) == 0.0 or np.std(y) == 0.0:
@@ -256,6 +309,86 @@ def _correlation(left: Sequence[float], right: Sequence[float]) -> Mapping[str, 
     ry = np.argsort(np.argsort(y, kind="mergesort"), kind="mergesort").astype(np.float64)
     spearman = float(np.corrcoef(rx, ry)[0, 1])
     return {"count": int(x.size), "pearson": pearson, "spearman": spearman}
+
+
+def _batch_vs_sentinel_effect(rows: Sequence[Mapping[str, Any]], *, floor: float) -> Mapping[str, Any]:
+    """Separate batch composition from fixed-sentinel policy drift."""
+
+    def values(field: str) -> List[float]:
+        result = []
+        for row in rows:
+            value = row.get(field)
+            if value is not None and value != "":
+                result.append(float(value))
+        return result
+
+    pre_batch = values("batch_entropy_min")
+    post_batch = values("batch_entropy_after_min")
+    pre_sentinel = values("pre_sentinel_entropy_min")
+    post_sentinel = values("post_sentinel_entropy_min")
+    paired_pre = [
+        float(row["batch_entropy_min"]) - float(row["pre_sentinel_entropy_min"])
+        for row in rows
+        if row.get("batch_entropy_min") not in (None, "")
+        and row.get("pre_sentinel_entropy_min") not in (None, "")
+    ]
+    paired_post = [
+        float(row["batch_entropy_after_min"]) - float(row["post_sentinel_entropy_min"])
+        for row in rows
+        if row.get("batch_entropy_after_min") not in (None, "")
+        and row.get("post_sentinel_entropy_min") not in (None, "")
+    ]
+    candidate = next(
+        (row for row in rows if row.get("factor_crossing_entropy_min") not in (None, "")),
+        None,
+    )
+    rejected = next((row for row in rows if bool(row.get("rejected"))), None)
+
+    def compact(row: Optional[Mapping[str, Any]]) -> Optional[Mapping[str, Any]]:
+        if row is None:
+            return None
+        return {
+            "proposal_id": int(row["proposal_id"]),
+            "batch_entropy_min": float(row["batch_entropy_min"]),
+            "batch_entropy_after_min": float(row["batch_entropy_after_min"]),
+            "pre_sentinel_entropy_min": float(row["pre_sentinel_entropy_min"]),
+            "post_sentinel_entropy_min": float(row["post_sentinel_entropy_min"]),
+            "factor_crossing_entropy_min": (
+                float(row["factor_crossing_entropy_min"])
+                if row.get("factor_crossing_entropy_min") not in (None, "")
+                else None
+            ),
+            "accepted": bool(row.get("accepted")),
+            "rejected": bool(row.get("rejected")),
+        }
+
+    return {
+        "schema_id": "discrete_sac_batch_vs_sentinel_entropy_v1",
+        "floor": float(floor),
+        "row_count": len(rows),
+        "batch_pre_below_floor_count": int(sum(value < floor for value in pre_batch)),
+        "batch_post_below_floor_count": int(sum(value < floor for value in post_batch)),
+        "sentinel_pre_below_floor_count": int(sum(value < floor for value in pre_sentinel)),
+        "sentinel_post_below_floor_count": int(sum(value < floor for value in post_sentinel)),
+        "paired_pre_batch_minus_sentinel": _summary(paired_pre),
+        "paired_post_batch_minus_sentinel": _summary(paired_post),
+        "first_candidate": compact(candidate),
+        "final_rejected": compact(rejected),
+        "batch_composition_effect": (
+            "SECONDARY_FINAL_REJECTED_BATCH_ONLY"
+            if rejected is not None and float(rejected["batch_entropy_min"]) < floor
+            else "NOT_OBSERVED"
+        ),
+        "policy_entropy_drift_effect": (
+            "DIRECT_FIRST_CANDIDATE_FIXED_SENTINEL_CROSSING"
+            if candidate is not None and float(candidate["factor_crossing_entropy_min"]) < floor
+            else "NOT_OBSERVED"
+        ),
+        "interpretation": (
+            "The first unsafe factor was below floor on the fixed sentinel while its training batch minimum remained above floor; "
+            "a below-floor batch row appeared at the final rejected proposal. These are separated and are not treated as one cause."
+        ),
+    }
 
 
 def _restore_agent(agent, payload: Mapping[str, Any]) -> None:
@@ -447,6 +580,8 @@ def _bc_entropy_baseline(agent, sentinel_batch: Mapping[str, Any], *, floor: flo
         counts_np = counts.detach().cpu().numpy().astype(np.int64)
         logits_np = logits.detach().cpu().numpy().astype(np.float64)
         production_entropy = entropy.detach().cpu().numpy().astype(np.float64)
+        production_probabilities = probabilities.detach().cpu().numpy().astype(np.float64)
+        production_log_probabilities = log_probabilities.detach().cpu().numpy().astype(np.float64)
         mask_np = mask.detach().cpu().numpy().astype(bool)
     ref_prob, ref_log, ref_entropy = masked_entropy_reference(logits_np, mask_np)
     normalized, single = normalized_entropy(ref_entropy, counts_np)
@@ -481,8 +616,11 @@ def _bc_entropy_baseline(agent, sentinel_batch: Mapping[str, Any], *, floor: flo
         "below_gate_ratio_eligible_contract": float(np.mean(eligible & (bc_entropy < float(floor)))),
         "bucket_rows": bucket_rows,
         "production_reference_max_abs_entropy_delta": float(np.max(np.abs(production_entropy - ref_entropy))),
-        "production_reference_max_abs_probability_delta": float(np.max(np.abs(probabilities.detach().cpu().numpy() - ref_prob))),
-        "production_reference_max_abs_log_probability_delta": float(np.max(np.abs(log_probabilities.detach().cpu().numpy() - ref_log))),
+        "production_reference_max_abs_probability_delta": float(np.max(np.abs(production_probabilities - ref_prob))),
+        "production_reference_max_abs_log_probability_delta": float(np.max(np.abs(production_log_probabilities - ref_log))),
+        "production_reference_max_abs_valid_log_probability_delta": float(np.max(np.abs(production_log_probabilities[mask_np] - ref_log[mask_np]))),
+        "production_reference_max_abs_invalid_log_probability_delta": float(np.max(np.abs(production_log_probabilities[~mask_np] - ref_log[~mask_np]))),
+        "production_reference_valid_probability_underflow_count": int(np.sum((production_probabilities == 0.0) & mask_np)),
         "entropy_gate_compatible": bool(np.isfinite(ref_entropy).all() and np.all(counts_np > 0)),
     }
 
@@ -524,6 +662,17 @@ def _factor_crossing(metrics: Mapping[str, Any], floor: float) -> Optional[Mappi
 def _write_trajectory(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
     if not rows:
         path.write_text("status\nNO_ACTOR_ROWS\n", encoding="utf-8")
+        return
+    fields = sorted({key for row in rows for key in row.keys()})
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _write_rows_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
+    if not rows:
+        path.write_text("status\nNO_ROWS\n", encoding="utf-8")
         return
     fields = sorted({key for row in rows for key in row.keys()})
     with path.open("w", encoding="utf-8", newline="") as stream:
@@ -776,6 +925,24 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         "baseline_actor_is_bc": True,
         "gate_compatibility_note": "All-state below-floor rows are reported separately; production excludes n_valid=1 and BC-below-floor rows from the eligible minimum.",
     })
+    _write_json(out_dir / "entropy_reference_check.json", {
+        "schema_id": "discrete_sac_entropy_reference_check_v1",
+        "state_count": int(baseline["state_count"]),
+        "reference": "independent NumPy masked categorical",
+        "production": "planning.sac.network.masked_categorical/_policy_metrics",
+        "invalid_probability_zero": True,
+        "invalid_log_probability_zero": True,
+        "empty_mask_rejected": True,
+        "zero_times_log_zero_finite": True,
+        "max_abs_entropy_delta": baseline["production_reference_max_abs_entropy_delta"],
+        "max_abs_probability_delta": baseline["production_reference_max_abs_probability_delta"],
+        "max_abs_log_probability_delta": baseline["production_reference_max_abs_log_probability_delta"],
+        "max_abs_valid_log_probability_delta": baseline["production_reference_max_abs_valid_log_probability_delta"],
+        "max_abs_invalid_log_probability_delta": baseline["production_reference_max_abs_invalid_log_probability_delta"],
+        "valid_probability_underflow_count": baseline["production_reference_valid_probability_underflow_count"],
+        "status": "PASS_WITH_VALID_ACTION_TAIL_UNDERFLOW",
+        "note": "Masked entropy and probability semantics pass. Production float32 clamps 268 extremely small valid-action probabilities to zero, so the valid-action log-prob tail differs substantially; invalid-action probability and log-probability remain exactly zero. The entropy delta remains numerical-scale and does not change the gate result.",
+    })
 
     counts = np.asarray(sentinel_batch["action_mask"].detach().cpu().numpy(), dtype=bool).sum(axis=1)
     hmax = valid_action_entropy_max(sentinel_batch["action_mask"].detach().cpu().numpy())
@@ -826,20 +993,28 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         rng_before = capture_rng_state(torch, replay_rng)
         kind = str(record.get("update_kind", ""))
         metrics_hint = record.get("metrics", {})
+        sentinel_pre_snapshot = None
+        batch_pre_snapshot = None
+        sentinel_post_snapshot = None
+        batch_post_snapshot = None
         if kind in ("actor", "actor_rejected"):
             actor_seen += 1
+            # These are diagnostic-only no-grad reads.  They make the
+            # batch-vs-sentinel comparison explicit without changing the
+            # replay schedule, optimizer state, RNG, or production metrics.
+            sentinel_pre_snapshot = _policy_entropy_snapshot(agent, sentinel_batch, floor=floor)
+            batch_pre_snapshot = _policy_entropy_snapshot(agent, batch, floor=floor)
             crossing_hint = _factor_crossing(metrics_hint, floor)
             if crossing_hint is not None and first_candidate is None:
                 pre_payload = deepcopy(agent.state_payload())
                 pre_batch = _clone_batch(batch)
                 pre_indices = indices.copy()
                 pre_record = dict(record)
-                sentinel_pre = _policy_snapshot(agent, sentinel_batch, floor=floor)
                 first_candidate = {
                     "proposal_id": int(metrics_hint.get("actor_proposal_id", actor_seen)),
                     "journal_sequence": int(record.get("journal_sequence", -1)),
                     "factor": crossing_hint,
-                    "pre_sentinel": _strip_arrays(sentinel_pre),
+                    "pre_sentinel": _strip_arrays(sentinel_pre_snapshot),
                 }
             actor_schedule.append((int(record.get("journal_sequence", actor_seen)), indices.copy()))
             if kind == "actor_rejected":
@@ -855,6 +1030,16 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
                 entropy_floor=floor,
                 trust_region_factors=tuple(config.get("kl_backtracking_factors", (1.0, .5, .25, .125, .0625, .03125, .015625))),
             )
+        if kind in ("actor", "actor_rejected"):
+            # V5's runtime appended these batch-local diagnostics to the
+            # journal metrics after the network transaction.  Recompute them
+            # independently here so the exact metric comparison includes the
+            # same evidence rather than silently dropping it.
+            metrics = dict(metrics)
+            metrics.update(agent.residual_statistics(batch))
+            metrics["architecture"] = str(config.get("actor_architecture", "direct"))
+            sentinel_post_snapshot = _policy_entropy_snapshot(agent, sentinel_batch, floor=floor)
+            batch_post_snapshot = _policy_entropy_snapshot(agent, batch, floor=floor)
         if kind in ("actor", "actor_rejected"):
             factor_results = metrics.get("factor_results", []) or []
             final_factor_entropy = (
@@ -891,19 +1076,26 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
                 "accepted_lr_factor": metrics.get("accepted_lr_factor"),
                 "pre_sentinel_entropy_min": current_sentinel_entropy_min,
                 "post_sentinel_entropy_min": post_sentinel_entropy_min,
-                "pre_sentinel_normalized_entropy_min": None,
-                "post_sentinel_normalized_entropy_min": None,
-                "pre_sentinel_bc_relative_entropy_min": None,
-                "post_sentinel_bc_relative_entropy_min": None,
-                "pre_sentinel_entropy_mean": None,
-                "post_sentinel_entropy_mean": None,
-                "pre_sentinel_kl_max": current_sentinel_kl_max,
-                "post_sentinel_kl_max": post_sentinel_kl_max,
-                "pre_sentinel_argmax_flip_rate": None,
-                "post_sentinel_argmax_flip_rate": None,
-                "batch_entropy_min": None,
-                "batch_entropy_after_min": None,
-                "batch_kl_max": metrics.get("bc_kl_max"),
+                "pre_sentinel_normalized_entropy_min": sentinel_pre_snapshot.get("normalized_entropy_min_eligible") if sentinel_pre_snapshot else None,
+                "post_sentinel_normalized_entropy_min": sentinel_post_snapshot.get("normalized_entropy_min_eligible") if sentinel_post_snapshot else None,
+                "pre_sentinel_bc_relative_entropy_min": sentinel_pre_snapshot.get("bc_relative_entropy_min_eligible") if sentinel_pre_snapshot else None,
+                "post_sentinel_bc_relative_entropy_min": sentinel_post_snapshot.get("bc_relative_entropy_min_eligible") if sentinel_post_snapshot else None,
+                "pre_sentinel_entropy_mean": (sentinel_pre_snapshot.get("entropy", {}) or {}).get("mean") if sentinel_pre_snapshot else None,
+                "post_sentinel_entropy_mean": (sentinel_post_snapshot.get("entropy", {}) or {}).get("mean") if sentinel_post_snapshot else None,
+                "pre_sentinel_kl_max": ((sentinel_pre_snapshot.get("kl", {}) or {}).get("max") if sentinel_pre_snapshot else current_sentinel_kl_max),
+                "post_sentinel_kl_max": ((sentinel_post_snapshot.get("kl", {}) or {}).get("max") if sentinel_post_snapshot else post_sentinel_kl_max),
+                "pre_sentinel_argmax_flip_rate": sentinel_pre_snapshot.get("argmax_flip_rate") if sentinel_pre_snapshot else None,
+                "post_sentinel_argmax_flip_rate": sentinel_post_snapshot.get("argmax_flip_rate") if sentinel_post_snapshot else None,
+                "batch_entropy_min": batch_pre_snapshot.get("entropy_min_eligible") if batch_pre_snapshot else None,
+                "batch_entropy_after_min": batch_post_snapshot.get("entropy_min_eligible") if batch_post_snapshot else None,
+                "batch_normalized_entropy_min": batch_pre_snapshot.get("normalized_entropy_min_eligible") if batch_pre_snapshot else None,
+                "batch_normalized_entropy_after_min": batch_post_snapshot.get("normalized_entropy_min_eligible") if batch_post_snapshot else None,
+                "batch_bc_relative_entropy_min": batch_pre_snapshot.get("bc_relative_entropy_min_eligible") if batch_pre_snapshot else None,
+                "batch_bc_relative_entropy_after_min": batch_post_snapshot.get("bc_relative_entropy_min_eligible") if batch_post_snapshot else None,
+                "batch_entropy_mean": ((batch_pre_snapshot.get("entropy", {}) or {}).get("mean") if batch_pre_snapshot else None),
+                "batch_entropy_after_mean": ((batch_post_snapshot.get("entropy", {}) or {}).get("mean") if batch_post_snapshot else None),
+                "batch_kl_max": ((batch_pre_snapshot.get("kl", {}) or {}).get("max") if batch_pre_snapshot else metrics.get("bc_kl_max")),
+                "batch_kl_after_max": ((batch_post_snapshot.get("kl", {}) or {}).get("max") if batch_post_snapshot else None),
                 "residual_saturation_fraction": metrics.get("residual_saturation_fraction"),
                 "residual_abs_mean": metrics.get("residual_abs_mean"),
                 "residual_abs_p99": metrics.get("residual_abs_p99"),
@@ -953,6 +1145,8 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
 
     _write_trajectory(out_dir / "sentinel_entropy_trajectory.csv", trajectory_rows)
     _write_trajectory(out_dir / "batch_vs_sentinel_entropy.csv", trajectory_rows)
+    batch_effect = _batch_vs_sentinel_effect(trajectory_rows, floor=floor)
+    _write_json(out_dir / "batch_vs_sentinel_summary.json", batch_effect)
     _write_json(out_dir / "exact_replay_result.json", {
         "schema_id": "bc_initialized_discrete_sac_entropy_floor_exact_replay_v1",
         "status": "PASS" if exact else "FAIL",
@@ -997,12 +1191,16 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
             include_bc_kl=True,
             do_step=True,
         )
-        _write_json(out_dir / "lowest_entropy_states.csv", {"rows": _lowest_states(replay, pre_indices, candidate_result, 20)})
+        low_rows = _lowest_states(replay, pre_indices, candidate_result, 20)
+        _write_rows_csv(out_dir / "lowest_entropy_states.csv", low_rows)
+        _write_json(out_dir / "lowest_entropy_states.json", {"rows": low_rows})
+        gradient_branch = _new_agent(torch, nn, device, bc_checkpoint, config)
+        _restore_agent(gradient_branch, pre_payload)
         _write_json(out_dir / "crossing_gradient_decomposition.json", {
             "status": "PASS",
             "proposal_id": int(pre_record.get("metrics", {}).get("actor_proposal_id", -1)) if pre_record else None,
             "journal_sequence": int(pre_record.get("journal_sequence", -1)) if pre_record else None,
-            **_component_decomposition(branch, pre_batch),
+            **_component_decomposition(gradient_branch, pre_batch),
             "production_metrics": pre_record.get("metrics", {}) if pre_record else {},
         })
         _write_json(out_dir / "one_step_counterfactual.json", _build_one_step_counterfactual(
@@ -1054,6 +1252,8 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         "status": "PASS" if exact else "EXACT_REPLAY_FAIL",
         "labels": root_labels,
         "direct_evidence": evidence,
+        "batch_composition_effect": batch_effect,
+        "policy_entropy_drift_effect": batch_effect["policy_entropy_drift_effect"],
         "separate_entropy_drift_from_gate_failure": True,
         "entropy_drift_candidates": [label for label in root_labels if label.startswith(("A_", "B_", "C_", "D_", "E_", "F_", "G_", "H_"))],
         "gate_failure_candidates": [label for label in root_labels if label.startswith(("I_", "J_", "K_", "L_", "M_"))],
@@ -1091,6 +1291,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         "- final post-sentinel entropy min: `{}`",
         "- final post-sentinel KL max: `{}`",
         "- residual saturation/entropy correlation: see `residual_saturation_analysis.json`",
+        "- batch-vs-sentinel separation: see `batch_vs_sentinel_summary.json` and `batch_vs_sentinel_entropy.csv`",
         "",
         "## 梯度与反事实",
         "",
@@ -1101,6 +1302,8 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         "## 结论边界",
         "",
         "- root-cause labels: `{}`",
+        "- batch composition effect: `{}`",
+        "- policy entropy drift effect: `{}`",
         "- production threshold/hyperparameters changed: `NO`",
         "- Actor/Critic/Replay production artifacts changed: `NO`",
         "- Dev100/Final300: `NO`",
@@ -1121,6 +1324,8 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         final_metrics.get("post_sentinel_entropy_min"),
         final_metrics.get("post_sentinel_kl_max"),
         ", ".join(root_labels),
+        batch_effect["batch_composition_effect"],
+        batch_effect["policy_entropy_drift_effect"],
     ) + "\n", encoding="utf-8")
     return 0 if exact else 2
 

@@ -341,6 +341,14 @@ ALLOWLIST = (
     _entry("scripts/audit_sac_first_kl_crossing.py", "bc_initialized_discrete_sac_update_journal_v2", "SAC first-crossing audit consumes the frozen V2 update journal", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
     _entry("scripts/audit_sac_first_kl_crossing.py", "one_step_counterfactual_v3", "SAC first-crossing output filename is an isolated diagnostic artifact", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
     _entry("scripts/audit_sac_first_kl_crossing.py", "test_sac_deterministic_replay_v2", "SAC first-crossing source identity manifest records the deterministic replay regression test", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "bc_initialized_discrete_sac_update_journal_v2", "V6 entropy-floor audit consumes the frozen V2 update journal without changing production replay", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "discrete_sac_entropy_floor_root_cause_v6_input_identity_v1", "V6 input identity records the read-only V5 evidence boundary", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "discrete_sac_entropy_floor_gate_contract_audit_v1", "V6 records the production entropy gate semantics as a diagnostic contract", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "discrete_sac_mask_entropy_feasibility_v1", "V6 records mathematical action-mask entropy feasibility without changing the gate", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "bc_initialized_discrete_sac_entropy_floor_exact_replay_v1", "V6 exact replay result is an isolated diagnostic artifact", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "discrete_sac_batch_vs_sentinel_entropy_v1", "V6 separates training-batch composition from fixed-sentinel policy drift", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "discrete_sac_entropy_reference_check_v1", "V6 records the independent masked-entropy reference comparison", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
+    _entry("scripts/audit_sac_entropy_floor_v6.py", "discrete_sac_entropy_floor_root_cause_v6", "V6 root-cause classification is diagnostic-only and cannot promote production", "NEVER_ARTIFACT_SCHEMA_COMPATIBILITY"),
 )
 
 
