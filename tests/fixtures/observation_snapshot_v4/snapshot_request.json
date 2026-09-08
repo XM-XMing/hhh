@@ -1,0 +1,18 @@
+{
+  "snapshot_request": {
+    "observation_ref": {
+      "schema_version": 4,
+      "runtime_instance_id": "worker-00-runtime-test",
+      "episode_id": "episode-54",
+      "reset_id": "reset-54",
+      "state_id": 1514,
+      "depth_id": "depth-1514",
+      "sim_time_ns": 559999987
+    },
+    "execution_id": 44000000000054,
+    "result_payload_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "command_sequence_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "msgpack_hex_file": "snapshot_request.msgpack.hex",
+  "payload_sha256": "f5141c37a5c09d1f10be31898b151d5871ed68dce6b8d64261eece85087e5474"
+}

@@ -1,0 +1,30 @@
+{
+  "result": {
+    "schema_version": 4,
+    "message_type": "PrimitiveExecutionResult",
+    "runtime_instance_id": "worker-00-runtime-test",
+    "execution_id": 72623859790382856,
+    "status": "FAILED",
+    "requested_frame_count": 25,
+    "applied_frame_count": 7,
+    "first_applied_state_id": 8000,
+    "endpoint_state_id": 8007,
+    "last_applied_frame_index": 6,
+    "reason_code": "COLLISION",
+    "command_sequence_hash": "82e7f39c8f9bb8b6ea5a42cee108cf1e33a3ee872ba47a51167c4ffd25bed62c",
+    "endpoint_sim_time_ns": 5140000000,
+    "endpoint_observation_ref": {
+      "schema_version": 4,
+      "runtime_instance_id": "worker-00-runtime-test",
+      "episode_id": "episode-v4-0001",
+      "reset_id": "reset-v4-0001",
+      "state_id": 8007,
+      "depth_id": "depth-v4-failed-0001",
+      "sim_time_ns": 5140000000
+    },
+    "result_generation": 0
+  },
+  "result_msgpack_hex_file": "failed.result_msgpack.hex",
+  "command_sequence_hash": "82e7f39c8f9bb8b6ea5a42cee108cf1e33a3ee872ba47a51167c4ffd25bed62c",
+  "result_payload_hash": "9648bc9373b795a0a13fe9ad523a2471f83c261b1415fa8c5c45791b879f9c85"
+}

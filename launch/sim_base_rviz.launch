@@ -1,0 +1,26 @@
+<launch>
+  <arg name="unity_host" default="127.0.0.1" />
+  <arg name="cmd_port" default="10253" />
+  <arg name="state_port" default="10254" />
+  <arg name="depth_port" default="12254" />
+  <arg name="map_path" default="data/map_data/forest_point_cloud.bin" />
+  <arg name="flip_depth_vertical" default="true" />
+  <arg name="flip_depth_horizontal" default="false" />
+  <arg name="rviz" default="true" />
+
+  <include file="$(find planning)/launch/sim_base.launch">
+    <arg name="unity_host" value="$(arg unity_host)" />
+    <arg name="cmd_port" value="$(arg cmd_port)" />
+    <arg name="state_port" value="$(arg state_port)" />
+    <arg name="depth_port" value="$(arg depth_port)" />
+    <arg name="map_path" value="$(arg map_path)" />
+    <arg name="flip_depth_vertical" value="$(arg flip_depth_vertical)" />
+    <arg name="flip_depth_horizontal" value="$(arg flip_depth_horizontal)" />
+  </include>
+
+  <include file="$(find planning)/launch/visualization.launch" />
+
+  <group if="$(arg rviz)">
+    <include file="$(find planning)/launch/rviz.launch" />
+  </group>
+</launch>

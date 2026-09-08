@@ -1,0 +1,16 @@
+std_msgs/Header header
+int64 state_id
+int64 sim_time_ns
+int64 applied_execution_id
+int32 applied_execution_frame_index
+int64 applied_command_id
+int32 execution_status
+int32 flags
+bool collided
+bool altitude_violation
+float32 min_clearance
+float32[3] front_clearances
+geometry_msgs/Point position
+geometry_msgs/Quaternion orientation
+geometry_msgs/Vector3 velocity
+geometry_msgs/Vector3 acceleration

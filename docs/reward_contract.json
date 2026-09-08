@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "contract_id": "terminal_failure_dominates_progress",
+  "formula": "progress_scale*progress + goal_z_progress_scale*z_progress + step + clearance_scale*max(0, clearance_margin-min_clearance) + action_change*action_changed + terminal_bonus_sum",
+  "defaults": {
+    "reward_progress_scale": 2.0,
+    "reward_goal_z_progress_scale": 1.0,
+    "reward_step": -0.02,
+    "reward_clearance_scale": -1.0,
+    "reward_action_change": -0.02,
+    "reward_success": 30.0,
+    "reward_collision": -100.0,
+    "reward_altitude_violation": -100.0,
+    "reward_timeout": -100.0,
+    "reward_far": -100.0,
+    "reward_dead_end": -100.0
+  },
+  "terminal_precedence": "success_requires_no_collision_or_altitude_violation",
+  "contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0"
+}

@@ -1,0 +1,20 @@
+unity_host: "127.0.0.1"
+cmd_port: 10253
+state_port: 10254
+depth_port: 12254
+execution_result_port: -1
+python_result_bind_host: "127.0.0.1"
+python_result_port: -1
+frame_id: "map"
+base_frame_id: "base_link"
+camera_frame_id: "d435i_depth_optical_frame"
+recv_hwm: 4
+send_hwm: 4
+spin_hz: 200.0
+
+publish_tf: true
+camera_offset_x: 0.0
+camera_offset_y: 0.0
+camera_offset_z: 0.0
+flip_depth_vertical: true
+flip_depth_horizontal: false

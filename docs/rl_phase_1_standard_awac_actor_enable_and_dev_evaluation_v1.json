@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "report_id": "rl_phase_1_standard_awac_actor_enable_and_dev_evaluation_v1",
+  "status": "FAIL_BLOCKED_PRECONDITION",
+  "phase1_executed": false,
+  "commit": false,
+  "owners": {
+    "formal_awac": "planning.awac",
+    "entrypoint": "scripts/train_awac.py"
+  },
+  "blocking_preconditions": {
+    "phase0_calibration_gate": {
+      "state": "PENDING",
+      "source_report_status": "FAIL_GATE_ENVIRONMENT_BLOCKED",
+      "pass_checkpoint_present": false,
+      "synthetic_smoke_actor_unchanged": true,
+      "synthetic_smoke_critic_updates": 8
+    },
+    "actor_depth_lr": {
+      "current_default": 0.0,
+      "required": ">0",
+      "resolved_from": "python/planning/awac/trainer.py"
+    },
+    "phase1_runtime_loop": {
+      "implemented": false,
+      "current_behavior": "one_replay_batch_then_one_update"
+    },
+    "bc_dev100_baseline": {
+      "status": "UNKNOWN_NOT_EXECUTED",
+      "dev_manifest": "data/test/awac_dev_seed4026_100/manifest.json"
+    }
+  },
+  "contracts": {
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "action_count": 105,
+    "reward_contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0",
+    "phase0_training_contract_sha256": "ac6edadadcdf5a7966c0499aacccb25054268dfd6e2a56348369d5a781509469",
+    "replay_contract_sha256": "2b6198b0d295a51687542e475505f85c0d84180a8e529b0c3ea4f84d99c2244f"
+  },
+  "bc_checkpoint": {
+    "path": "data/teach/2026_6w/bc_training/checkpoint_best_soft.pt",
+    "sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2"
+  },
+  "phase1_output": {
+    "calibration_gate_state": "PENDING",
+    "calibration_actor_unchanged": "YES_FOR_PHASE0_SYNTHETIC_SMOKE_ONLY",
+    "actor_update_enabled": false,
+    "actor_update_count": 0,
+    "critic1_update_count": 0,
+    "critic2_update_count": 0,
+    "bc_kl_mode": "FIXED",
+    "bc_kl_weight": 0.05,
+    "standard_awac_classification": "NOT_EXECUTED",
+    "catastrophic_policy_collapse": "NOT_EXECUTED",
+    "critic_diverged": "NOT_EXECUTED",
+    "replay_audit": "NOT_EXECUTED",
+    "reliable_exact_quality": "NOT_EXECUTED"
+  },
+  "prohibited_features": {
+    "actor_global_map_leak_count": 0,
+    "critic_global_map_leak_count": 0,
+    "replay_privileged_field_count": 0,
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false
+  },
+  "protected_artifacts": {
+    "final_300_evaluation_executed": false,
+    "frozen_final_test_300_modified": false,
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false
+  },
+  "verification": {
+    "compileall": {
+      "status": "PASS",
+      "command_environment": "conda activate xm"
+    },
+    "awac_focused_tests": {
+      "passed": 52,
+      "skipped": 0,
+      "failed": 0
+    },
+    "full_pytest": {
+      "passed": 697,
+      "skipped": 42,
+      "failed": 8,
+      "failure_class": "socket_permission_restricted_environment",
+      "modules": [
+        "tests/test_p0_m2_runner_startup.py",
+        "tests/test_p0_m2_single_worker_runner.py"
+      ]
+    }
+  },
+  "next_action": "RESOLVE_FULL_TEST_SOCKET_PERMISSION; PRODUCE_FORMAL_PHASE0_CALIBRATION_PASS_CHECKPOINT; SET_CANONICAL_ACTOR_DEPTH_LR_GT_ZERO; THEN_RESTART_PHASE1_PREFLIGHT"
+}

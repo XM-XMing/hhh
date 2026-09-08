@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "report_id": "rl_phase_0_awac_contract_and_critic_calibration_implementation_v1",
+  "status": "FAIL_GATE_ENVIRONMENT_BLOCKED",
+  "implementation_components": "PASS",
+  "scope": {
+    "root": "/home/xm/XM/xm_ws/src/planning",
+    "formal_awac_long_training_executed": false,
+    "final_300_evaluation_executed": false,
+    "formal_collection_executed": false,
+    "unity_started": false,
+    "bridge_started": false,
+    "commit": false
+  },
+  "owners": {
+    "formal_awac": "planning.awac",
+    "entrypoint": "scripts/train_awac.py",
+    "reward": "planning.contracts.reward",
+    "replay": "planning.awac.replay",
+    "calibration": "planning.awac.calibration",
+    "checkpoint": "planning.awac.checkpoint",
+    "dev_set": "planning.evaluation.mission_split"
+  },
+  "contracts": {
+    "phase": "critic_calibration",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "task_contract_schema_version": 2,
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "feature_contract_id": "depth_goal_state_prev_action",
+    "vector_dimension": 127,
+    "action_count": 105,
+    "reward_contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0",
+    "reward_scale": 0.1,
+    "reward_scale_applied_exactly_once": true,
+    "training_contract_sha256": "ac6edadadcdf5a7966c0499aacccb25054268dfd6e2a56348369d5a781509469",
+    "replay_contract_sha256": "2b6198b0d295a51687542e475505f85c0d84180a8e529b0c3ea4f84d99c2244f",
+    "replay_fields": [
+      "depth",
+      "vector",
+      "action_mask",
+      "action",
+      "reward",
+      "next_depth",
+      "next_vector",
+      "next_action_mask",
+      "done",
+      "behavior_source"
+    ],
+    "replay_privileged_field_count": 0
+  },
+  "dev_set": {
+    "path": "data/test/awac_dev_seed4026_100",
+    "seed": 4026,
+    "missions": 100,
+    "validation": "PASS",
+    "final_duplicate_mission_count": 0,
+    "calibration_split_path": "data/test/awac_calibration_split_seed4026.json",
+    "calibration_split_validation": "PASS",
+    "frozen_final_test_300_modified": false
+  },
+  "bc_initialization": {
+    "checkpoint": "data/teach/2026_6w/bc_training/checkpoint_best_soft.pt",
+    "checkpoint_sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2",
+    "actor_state_sha256": "6ce3d0ff0ef20b6b8a382f0bef7205c86ae9d80d81f5dfd067c86927bdbf88df",
+    "initialization_parity": "PASS",
+    "critic1_from_bc_encoder": true,
+    "critic2_from_bc_encoder": true,
+    "critic1_q_head_independent": true,
+    "critic2_q_head_independent": true
+  },
+  "calibration_smoke": {
+    "path": "/tmp/xm-awac-critic-calibration-v1-final-current",
+    "runtime_mode": "synthetic_offline_smoke",
+    "replay_transitions": 160,
+    "episodes": 20,
+    "critic_updates": 8,
+    "actor_frozen": true,
+    "actor_unchanged": true,
+    "actor_update_count": 0,
+    "critic1_updated": true,
+    "critic2_updated": true,
+    "action_mismatch_count": 0,
+    "replay_audit": "PASS",
+    "gate_state": "PENDING",
+    "gate_would_open": false,
+    "holdout_td_loss": 113.28556823730469,
+    "q_mean": -0.5933074355125427,
+    "q_std": 0.2773297429084778,
+    "q_p99": -0.3215242874622345,
+    "twin_disagreement_mean": 2.218523472547531,
+    "twin_disagreement_p95": 3.990880438685417,
+    "normalized_twin_disagreement": 0.23937382436193758,
+    "holdout_q_return_rank_correlation": 0.0,
+    "success_q_median": null,
+    "failure_q_median": -0.5933074355125427,
+    "success_minus_failure_q_median": null
+  },
+  "prohibited_features": {
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false,
+    "actor_update_enabled": false,
+    "actor_global_map_leak_count": 0,
+    "critic_global_map_leak_count": 0
+  },
+  "verification": {
+    "compileall": "PASS",
+    "phase0_focused_tests": {
+      "passed": 17,
+      "skipped": 0,
+      "failed": 0
+    },
+    "script_contract_test": {
+      "passed": 15,
+      "skipped": 0,
+      "failed": 0
+    },
+    "native_depth_geometry_tests": {
+      "passed": 20,
+      "skipped": 0,
+      "failed": 0
+    },
+    "latest_unfiltered_full_pytest": {
+      "passed": 685,
+      "skipped": 42,
+      "failed": 8,
+      "failure_class": "environment_socket_permission"
+    },
+    "code_eligible_full_pytest": {
+      "passed": 669,
+      "skipped": 42,
+      "failed": 0
+    },
+    "socket_blocked_test_modules": [
+      "tests/test_p0_m2_runner_startup.py",
+      "tests/test_p0_m2_single_worker_runner.py"
+    ]
+  },
+  "changes": {
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "cpp_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "trajectory_semantics_changed": false,
+    "reward_numerical_semantics_changed": false,
+    "phase1_started": false
+  },
+  "next_action": "RERUN_UNFILTERED_FULL_PYTEST_WITH_LOOPBACK_PERMISSION_THEN_RL_PHASE_1_STANDARD_AWAC_ACTOR_ENABLE_AND_DEV_EVALUATION"
+}

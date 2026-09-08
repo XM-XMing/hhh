@@ -1,0 +1,257 @@
+# RL Phase 1 Host Runtime Execution V1
+
+Status: `FAIL_BLOCKED_ENVIRONMENT`
+
+Root: `/home/xm/XM/xm_ws/src/planning`  
+Workspace: `/home/xm/XM/xm_ws`  
+Python environment: `xm`
+
+## Gate result
+
+The first required environment check was run after sourcing conda, ROS Noetic,
+and the Planning devel space. Python resolved to
+`/home/xm/anaconda3/envs/xm/bin/python`. Creating a loopback socket failed:
+
+```text
+PermissionError: [Errno 1] Operation not permitted
+```
+
+Therefore:
+
+```text
+RUNTIME_CAPABILITY_GATE=FAIL_SOCKET_ENVIRONMENT
+```
+
+The task stopped fail-closed at this first gate. ROS master, subprocess,
+Unity, Bridge, BC Dev100, formal critic calibration, Replay creation,
+checkpoint creation, and resume validation were not attempted. No code,
+test, runtime artifact, frozen artifact, or model was modified to bypass the
+restriction.
+
+## Frozen identities
+
+| Item | Value |
+|---|---|
+| BC60K checkpoint | `data/teach/2026_6w/bc_training/checkpoint_best_soft.pt` |
+| BC60K checkpoint SHA256 | `ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2` |
+| Task contract SHA256 | `2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df` |
+| Observation contract | `reliable_exact_endpoint_snapshot` |
+| Reward contract SHA256 | `1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0` |
+| Replay contract SHA256 | `2b6198b0d295a51687542e475505f85c0d84180a8e529b0c3ea4f84d99c2244f` |
+| Actions / max steps | `105 / 45` |
+| Safety mask / execution mode | `depth / continuous` |
+| Formal Actor depth LR | `1.0e-6` |
+| Formal Critic depth LR | `1.0e-5` |
+| Phase 1 contract SHA256 | `6a3ae6e650db8e60b693396fbc3ac15bf6f6030c86dcd650dc1b6534a63c4233` |
+
+`BC_AWAC_INITIALIZATION_PARITY=PASS` remains the previously established
+static checkpoint/contract evidence. It is not a runtime Dev100 result.
+
+## BC Dev100
+
+The frozen set `data/test/awac_dev_seed4026_100` remains the only `DEV` set;
+it was not regenerated, modified, or added to Replay. Its baseline output
+directory remains `data/test/awac_dev_seed4026_100/bc60k_baseline/`, but the
+evaluation was not started:
+
+```text
+BC_DEV_ATTEMPTED=0
+BC_DEV_SUCCESS_COUNT=NOT_AVAILABLE
+BC_DEV_SUCCESS_RATE=NOT_AVAILABLE
+BC_DEV_COLLISION=NOT_AVAILABLE
+BC_DEV_DEAD_END=NOT_AVAILABLE
+BC_DEV_TIMEOUT=NOT_AVAILABLE
+BC_DEV_HARD_ALTITUDE=NOT_AVAILABLE
+BC_DEV_OTHER_FAILURE=NOT_AVAILABLE
+BC_DEV_MEAN_RETURN=NOT_AVAILABLE
+BC_DEV_MEAN_STEPS=NOT_AVAILABLE
+BC_DEV_RELIABLE_EXACT_QUALITY=NOT_EXECUTED_SOCKET_GATE
+BC_DEV_BASELINE_SHA256=NOT_CREATED
+```
+
+`data/test/bc_closed_loop_eval_300` remained `FINAL_TEST_ONLY` and was not
+run or modified.
+
+## Formal critic calibration
+
+The formal run
+`awac_bc60k_seed2026_phase1_calibration_v1` was not started. The gate state
+below is carried forward from the bounded synthetic critic-only smoke and is
+not formal calibration certification:
+
+```text
+CALIBRATION_GATE_STATE=PENDING
+CALIBRATION_CERTIFICATION=BLOCKED_PENDING
+CALIBRATION_CERTIFICATION_DETAIL=FORMAL_RUN_BLOCKED_BY_SOCKET_GATE; SAFETY_CAP_NOT_REACHED
+```
+
+The canonical hard safety cap remains 30,000 transitions or 1,000 episodes;
+it is not a PASS threshold. Formal calibration metrics and Actor before/after
+hashes are unavailable.
+
+Prior synthetic smoke evidence, retained only for implementation scope:
+
+```text
+CALIBRATION_REPLAY_TRANSITIONS=160 (synthetic only)
+CALIBRATION_EPISODES=20 (synthetic only)
+CALIBRATION_CRITIC_UPDATES=8 (synthetic only)
+CALIBRATION_HOLDOUT_TD_LOSS=109.96343994140625 (synthetic only)
+CALIBRATION_Q_MEAN=-0.7482772469520569 (synthetic only)
+CALIBRATION_Q_STD=0.3176383376121521 (synthetic only)
+CALIBRATION_Q_P99=-0.43699167609214784 (synthetic only)
+CALIBRATION_TWIN_DISAGREEMENT_MEAN=2.214468777179718 (synthetic only)
+CALIBRATION_TWIN_DISAGREEMENT_P95=3.9950104773044584 (synthetic only)
+CALIBRATION_NORMALIZED_TWIN_DISAGREEMENT=0.24353810783601798 (synthetic only)
+HOLDOUT_Q_RETURN_RANK_CORRELATION=0.0 (synthetic only)
+```
+
+Synthetic artifact:
+`/tmp/xm-awac-phase1-calibration-smoke-v2-20260904/checkpoint_calibration.pt`  
+SHA256: `11dab8d816823eb8fb7036db1f7732df0ecaea64d6339d153ef06aef8e8cce72`
+
+That smoke kept the Actor frozen and updated both Critics. It does not prove
+formal runtime calibration:
+
+```text
+CALIBRATION_ACTOR_UNCHANGED=YES_FOR_SYNTHETIC_SMOKE_ONLY
+ACTOR_UPDATE_COUNT=0
+CRITIC1_UPDATED=YES_FOR_SYNTHETIC_SMOKE_ONLY
+CRITIC2_UPDATED=YES_FOR_SYNTHETIC_SMOKE_ONLY
+```
+
+No PASS checkpoint exists:
+
+```text
+CALIBRATION_PASS_CHECKPOINT_CREATED=NO
+CALIBRATION_PASS_CHECKPOINT=checkpoint_calibration_pass.pt
+CALIBRATION_PASS_CHECKPOINT_SHA256=NOT_CREATED
+CALIBRATION_RESUME_DRY_RUN=FAIL_NO_PASS_CHECKPOINT
+```
+
+## Audit and tests
+
+The retained normal-host certification is `705 passed, 42 skipped, 0 failed`.
+The restricted sandbox observation from the preceding verification was
+`706 passed, 42 skipped, 8 failed`; all eight were socket-permission failures
+in the pre-existing P0 runner startup tests. The code-eligible result was
+`706 passed, 42 skipped, 0 failed`. No tests were changed, skipped, mocked, or
+weakened for this gate.
+
+```text
+COMPILEALL=PASS (retained)
+FOCUSED_AWAC_PHASE1_TESTS=76 passed, 0 failed (retained)
+FULL_TEST_PASS_COUNT=705
+FULL_TEST_SKIP_COUNT=42
+FULL_TEST_FAILURE_COUNT=0
+AWAC_REPLAY_AUDIT=PASS (static/synthetic scope only)
+ACTOR_GLOBAL_MAP_LEAK_COUNT=0
+CRITIC_GLOBAL_MAP_LEAK_COUNT=0
+REPLAY_PRIVILEGED_FIELD_COUNT=0
+```
+
+## Protected boundaries
+
+```text
+ACTOR_UPDATE_ENABLED=NO
+STANDARD_AWAC_LONG_TRAINING_EXECUTED=NO
+CONFIDENCE_ALGORITHM_IMPLEMENTED=NO
+ADAPTIVE_BC_KL_IMPLEMENTED=NO
+PRIMITIVE_NEIGHBOR_ALGORITHM_IMPLEMENTED=NO
+FINAL_300_EVALUATION_EXECUTED=NO
+FROZEN_FINAL_TEST_300_MODIFIED=NO
+BC_CHANGED=NO
+UNITY_CHANGED=NO
+BRIDGE_CHANGED=NO
+TASK_CONTRACT_CHANGED=NO
+OBSERVATION_CONTRACT_CHANGED=NO
+REWARD_CONTRACT_CHANGED=NO
+MPL_CHANGED=NO
+COMMIT=NO
+```
+
+Only the two report files for this task were added. No formal data, Replay,
+calibration checkpoint, Unity artifact, Bridge artifact, or Actor state was
+created or modified.
+
+## Final output
+
+```text
+RL_PHASE_1_HOST_RUNTIME_EXECUTION_V1=FAIL
+RUNTIME_CAPABILITY_GATE=FAIL_SOCKET_ENVIRONMENT
+
+BC60K_CHECKPOINT=data/teach/2026_6w/bc_training/checkpoint_best_soft.pt
+BC60K_CHECKPOINT_SHA256=ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2
+
+BC_DEV_ATTEMPTED=0
+BC_DEV_SUCCESS_COUNT=NOT_AVAILABLE
+BC_DEV_SUCCESS_RATE=NOT_AVAILABLE
+BC_DEV_COLLISION=NOT_AVAILABLE
+BC_DEV_DEAD_END=NOT_AVAILABLE
+BC_DEV_TIMEOUT=NOT_AVAILABLE
+BC_DEV_HARD_ALTITUDE=NOT_AVAILABLE
+BC_DEV_OTHER_FAILURE=NOT_AVAILABLE
+BC_DEV_MEAN_RETURN=NOT_AVAILABLE
+BC_DEV_MEAN_STEPS=NOT_AVAILABLE
+BC_DEV_RELIABLE_EXACT_QUALITY=NOT_EXECUTED_SOCKET_GATE
+BC_DEV_BASELINE_SHA256=NOT_CREATED
+
+CALIBRATION_GATE_STATE=PENDING
+CALIBRATION_CERTIFICATION=BLOCKED_PENDING
+CALIBRATION_REPLAY_TRANSITIONS=NOT_AVAILABLE_FORMAL; 160_SYNTHETIC_SMOKE
+CALIBRATION_EPISODES=NOT_AVAILABLE_FORMAL; 20_SYNTHETIC_SMOKE
+CALIBRATION_CRITIC_UPDATES=NOT_AVAILABLE_FORMAL; 8_SYNTHETIC_SMOKE
+CALIBRATION_PASS_ENV_STEP=NOT_AVAILABLE
+CALIBRATION_PASS_REPLAY_SIZE=NOT_AVAILABLE
+CALIBRATION_PASS_CRITIC_UPDATES=NOT_AVAILABLE
+CALIBRATION_HOLDOUT_TD_LOSS=NOT_AVAILABLE_FORMAL
+CALIBRATION_Q_MEAN=NOT_AVAILABLE_FORMAL
+CALIBRATION_Q_STD=NOT_AVAILABLE_FORMAL
+CALIBRATION_Q_P99=NOT_AVAILABLE_FORMAL
+CALIBRATION_TWIN_DISAGREEMENT_MEAN=NOT_AVAILABLE_FORMAL
+CALIBRATION_TWIN_DISAGREEMENT_P95=NOT_AVAILABLE_FORMAL
+CALIBRATION_NORMALIZED_TWIN_DISAGREEMENT=NOT_AVAILABLE_FORMAL
+HOLDOUT_Q_RETURN_RANK_CORRELATION=NOT_AVAILABLE_FORMAL
+SUCCESS_Q_MEDIAN=NOT_AVAILABLE
+FAILURE_Q_MEDIAN=NOT_AVAILABLE
+SUCCESS_MINUS_FAILURE_Q_MEDIAN=NOT_AVAILABLE
+CALIBRATION_ACTOR_UNCHANGED=YES_FOR_SYNTHETIC_SMOKE_ONLY
+ACTOR_UPDATE_COUNT=0
+CRITIC1_UPDATED=YES_FOR_SYNTHETIC_SMOKE_ONLY
+CRITIC2_UPDATED=YES_FOR_SYNTHETIC_SMOKE_ONLY
+CALIBRATION_PASS_CHECKPOINT_CREATED=NO
+CALIBRATION_PASS_CHECKPOINT=checkpoint_calibration_pass.pt
+CALIBRATION_PASS_CHECKPOINT_SHA256=NOT_CREATED
+AWAC_REPLAY_AUDIT=PASS_STATIC_AND_SYNTHETIC_ONLY
+CALIBRATION_RESUME_DRY_RUN=FAIL_NO_PASS_CHECKPOINT
+PHASE1_READINESS_DRY_RUN=PASS
+PHASE1_READINESS=FAIL
+
+FORMAL_ACTOR_DEPTH_LR=1.0e-6
+FORMAL_CRITIC_DEPTH_LR=1.0e-5
+ACTOR_UPDATE_ENABLED=NO
+STANDARD_AWAC_LONG_TRAINING_EXECUTED=NO
+CONFIDENCE_ALGORITHM_IMPLEMENTED=NO
+ADAPTIVE_BC_KL_IMPLEMENTED=NO
+PRIMITIVE_NEIGHBOR_ALGORITHM_IMPLEMENTED=NO
+ACTOR_GLOBAL_MAP_LEAK_COUNT=0
+CRITIC_GLOBAL_MAP_LEAK_COUNT=0
+REPLAY_PRIVILEGED_FIELD_COUNT=0
+FINAL_300_EVALUATION_EXECUTED=NO
+FROZEN_FINAL_TEST_300_MODIFIED=NO
+
+FULL_TEST_PASS_COUNT=705
+FULL_TEST_SKIP_COUNT=42
+FULL_TEST_FAILURE_COUNT=0
+BC_CHANGED=NO
+UNITY_CHANGED=NO
+BRIDGE_CHANGED=NO
+TASK_CONTRACT_CHANGED=NO
+OBSERVATION_CONTRACT_CHANGED=NO
+REWARD_CONTRACT_CHANGED=NO
+MPL_CHANGED=NO
+COMMIT=NO
+NEXT_ACTION=RUN_ON_SOCKET_ENABLED_HOST_BC_DEV100_BASELINE_THEN_FORMAL_CRITIC_CALIBRATION
+```
+
+Do not start standard AWAC Actor training automatically. The next action is
+blocked until a socket-enabled host/runtime is available.

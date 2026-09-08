@@ -1,0 +1,497 @@
+{
+  "report_id": "RL_PHASE_1_END_TO_END_AWAC_RUNTIME_GAP_AUDIT_V1",
+  "audit_status": "PASS",
+  "historical_status": "PRE_FIX_SNAPSHOT_SUPERSEDED_FOR_RECOVERY_AND_V6_READINESS",
+  "superseded_by": "RL_PHASE_1_CRASH_SAFE_CHECKPOINT_REPLAY_AND_EXACT_RESUME_V1",
+  "current_recovery_reassessment": {
+    "replay_flush_status": "PASS",
+    "replay_checkpoint_transaction_status": "PASS",
+    "checkpoint_atomicity_status": "PASS",
+    "resume_exactness_status": "PASS",
+    "rng_restore_status": "PASS",
+    "metrics_persistence_status": "PASS",
+    "remaining_v6_blocker_count": 0,
+    "unknown_critical_count": 0,
+    "v6_ready": true,
+    "evidence_scope": "source plus deterministic CPU/fault-injection tests; no V6 runtime executed"
+  },
+  "audit_mode": "AUDIT_INTEGRATION_READINESS",
+  "root": "/home/xm/XM/xm_ws/src/planning",
+  "workspace": "/home/xm/XM/xm_ws",
+  "runtime_executed": false,
+  "actor_update_executed": false,
+  "final_300_evaluation_executed": false,
+  "pre_refactor": {
+    "source_tree_available": false,
+    "behavior_evidence_available": true,
+    "evidence": [
+      "Retained AWAC-only migration report",
+      "Retained managed-runtime lifecycle report",
+      "Retained replay-producer and checkpoint-identity reports",
+      "Retained Phase 1 reports"
+    ]
+  },
+  "contracts": {
+    "bc60k_checkpoint": "data/teach/2026_6w/bc_training/checkpoint_best_soft.pt",
+    "bc60k_sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "reward_contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0",
+    "training_mission_index": "data/teach/2026_6w/missions.csv",
+    "final300_path": "data/test/bc_closed_loop_eval_300",
+    "frozen": {
+      "bc_changed": false,
+      "unity_changed": false,
+      "bridge_changed": false,
+      "task_contract_changed": false,
+      "observation_contract_changed": false,
+      "reward_contract_changed": false,
+      "mpl_changed": false
+    }
+  },
+  "historical_runtime_evidence": {
+    "calibration_artifacts": "V2 through V5",
+    "workers": 2,
+    "managed_runtime_ready": true,
+    "real_replay_rows": 95,
+    "reliable_v4_rows": 95,
+    "legacy_rows": 0,
+    "actor_update_count": 0,
+    "v2_v4_checkpoint_replay_size": 66,
+    "v2_v4_persisted_replay_size": 95,
+    "v5_checkpoint_replay_size": 95,
+    "v5_persisted_replay_size": 95,
+    "bc60k_dev100": {
+      "success": 69,
+      "attempted": 100,
+      "collision": 9,
+      "dead_end": 22,
+      "timeout": 0,
+      "reliable_exact_runtime": "PASS"
+    }
+  },
+  "component_status": [
+    {
+      "component": "Mission Loading",
+      "owner": "planning.awac.calibration_runtime.load_calibration_missions",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "V2-V5 retain ordered mission-source identity and cursor.",
+      "unit_evidence": "Duplicate and invalid mission validation.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "Mission Dispatch",
+      "owner": "CalibrationReplayProducer.run",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "Two workers dispatched real episodes without duplicate replay identities.",
+      "unit_evidence": "Ordering and failure seams.",
+      "risk": "LOW",
+      "required_before_v6": false
+    },
+    {
+      "component": "Managed Runtime",
+      "owner": "planning.awac.trainer.start_managed_calibration_runtime and ManagedRuntimePool",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "V2-V5 manifests record isolated ROS, Unity, and Bridge readiness.",
+      "unit_evidence": "Lifecycle failure and close tests.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    },
+    {
+      "component": "ParallelEnv",
+      "owner": "planning.runtime.parallel_env.ParallelEnvPool",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "V2-V5 received real reset and step responses.",
+      "unit_evidence": "Ordering, timeout, and close tests.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    },
+    {
+      "component": "Observation",
+      "owner": "CalibrationReplayProducer observation validators",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "Persisted replay is reliable-exact with zero legacy rows.",
+      "unit_evidence": "Endpoint, depth, vector, and mask contract tests.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "BC Action",
+      "owner": "CalibrationReplayProducer.bc_calibration_action through policy_evaluator.choose_action",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "Runtime actions exist, but no independent action-by-action evaluator trace comparison exists.",
+      "unit_evidence": "Deterministic action-owner parity tests.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    },
+    {
+      "component": "Terminal Resolution",
+      "owner": "planning.runtime.unity_env.apply_post_action_dead_end and calibration terminal normalization",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "Real terminal episodes were persisted.",
+      "unit_evidence": "Terminal zero-mask ordering tests.",
+      "risk": "LOW",
+      "required_before_v6": false
+    },
+    {
+      "component": "Reward",
+      "owner": "Environment response to replay transition construction",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "Runtime replay contains raw environment reward and formal scale metadata.",
+      "unit_evidence": "Exact-once scaling path tests.",
+      "risk": "LOW",
+      "required_before_v6": false
+    },
+    {
+      "component": "Replay Append",
+      "owner": "planning.awac.replay.AWACReplayBuffer.append",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "95 reliable-exact rows persisted.",
+      "unit_evidence": "Transition shape, dtype, and validation tests.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "Replay Flush",
+      "owner": "planning.awac.replay.AWACReplayBuffer.flush",
+      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "runtime_evidence": "V5 inspected checkpoint and replay both contain 95 rows.",
+      "unit_evidence": "Flush and metadata writer tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Train/Holdout Split",
+      "owner": "calibration_runtime deterministic split owner and CalibrationReplayProducer",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "V5 records separate train and holdout episode identities.",
+      "unit_evidence": "Overlap and split identity validation.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "Critic Warmup",
+      "owner": "CalibrationReplayProducer._update_critics",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "95 replay rows produced zero updates below warmup.",
+      "unit_evidence": "Warmup threshold tests.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "Critic Sampling",
+      "owner": "planning.awac.replay.AWACReplayBuffer.sample",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "No historical calibration reached critic warmup.",
+      "unit_evidence": "Batch sampling tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Critic Update",
+      "owner": "planning.awac.learner.AWACLearner.calibration_update",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "No historical calibration reached critic warmup.",
+      "unit_evidence": "Critic-only update tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Target Update",
+      "owner": "planning.awac.learner.AWACLearner.update",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "No historical calibration reached critic warmup.",
+      "unit_evidence": "Twin target soft-update tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Device Transfer",
+      "owner": "planning.awac.replay.move_awac_batch_to_device and planning.awac.learner.resolve_torch_device",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "No historical critic batch executed.",
+      "unit_evidence": "CPU/CUDA canonical-device and holdout tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Holdout Evaluation",
+      "owner": "CalibrationReplayProducer holdout-window construction",
+      "status": "SEMANTICS_CHANGED_NOT_VERIFIED",
+      "runtime_evidence": "V5 exposed the old placeholder classification issue.",
+      "unit_evidence": "Finite-immature and model-mode restore tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Gate Maturity",
+      "owner": "planning.awac.calibration.evaluate_calibration_gate",
+      "status": "SEMANTICS_CHANGED_NOT_VERIFIED",
+      "runtime_evidence": "No formal runtime has exercised the corrected gate semantics.",
+      "unit_evidence": "PENDING versus FAIL_DIVERGED maturity tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Gate Window Accounting",
+      "owner": "CalibrationReplayProducer gate history and progress state",
+      "status": "SEMANTICS_CHANGED_NOT_VERIFIED",
+      "runtime_evidence": "No formal runtime after ordering repair.",
+      "unit_evidence": "Window de-duplication and maturity tests.",
+      "risk": "HIGH",
+      "required_before_v6": true
+    },
+    {
+      "component": "Checkpoint Identity",
+      "owner": "planning.awac.checkpoint.build_awac_checkpoint_identity",
+      "status": "SEMANTICS_CHANGED_AND_VERIFIED",
+      "runtime_evidence": "V5 identity validates against replay and mission artifacts.",
+      "unit_evidence": "Nineteen-field identity validation.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "Checkpoint Transaction",
+      "owner": "AWACTrainer.persist_checkpoint and checkpoint.save_torch_atomic",
+      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "runtime_evidence": "Only normal V5 alignment is available.",
+      "unit_evidence": "Save and validate path tests without interruption transaction coverage.",
+      "risk": "BLOCKER",
+      "required_before_v6": true
+    },
+    {
+      "component": "Pass Checkpoint",
+      "owner": "AWACTrainer calibration completion path",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "No calibration gate PASS exists.",
+      "unit_evidence": "PASS-only checkpoint construction tests.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    },
+    {
+      "component": "Resume",
+      "owner": "Trainer resume validators and CalibrationReplayProducer.restore_progress",
+      "status": "MISSING",
+      "runtime_evidence": "No successful exact-resume runtime artifact.",
+      "unit_evidence": "Fail-closed identity mismatch tests.",
+      "risk": "BLOCKER",
+      "required_before_v6": true
+    },
+    {
+      "component": "RNG State",
+      "owner": "CalibrationReplayProducer and framework RNG owners",
+      "status": "MISSING",
+      "runtime_evidence": "No checkpointed exact-RNG evidence exists.",
+      "unit_evidence": "Static inspection establishes omission.",
+      "risk": "BLOCKER",
+      "required_before_v6": true
+    },
+    {
+      "component": "Failure Recovery",
+      "owner": "CalibrationReplayProducer and managed runtime startup handling",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "No real Unity or Bridge failure-recovery artifact.",
+      "unit_evidence": "Fake-worker failure and startup cleanup tests.",
+      "risk": "HIGH",
+      "required_before_v6": false
+    },
+    {
+      "component": "Interrupt Cleanup",
+      "owner": "CalibrationReplayProducer._safe_stop_and_close and trainer finalization",
+      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "runtime_evidence": "No interrupted calibration artifact proves a durable checkpoint transaction.",
+      "unit_evidence": "Close behavior tests, not durable interrupt-recovery tests.",
+      "risk": "BLOCKER",
+      "required_before_v6": true
+    },
+    {
+      "component": "Metrics Persistence",
+      "owner": "Trainer metrics and checkpoint progress payload",
+      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "runtime_evidence": "V5 lacks save reason, traceback, and durable runtime-failure diagnostics.",
+      "unit_evidence": "Metrics serialization tests.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    },
+    {
+      "component": "Actor Freeze",
+      "owner": "AWACLearner.calibration_update",
+      "status": "RUNTIME_VERIFIED",
+      "runtime_evidence": "V2-V5 record zero actor updates and optimizer steps.",
+      "unit_evidence": "Frozen-actor assertions.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "Phase Transition",
+      "owner": "planning.awac.phase1",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "No calibration PASS exists.",
+      "unit_evidence": "PENDING/PASS/FAIL state-machine tests.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    },
+    {
+      "component": "Final300 Protection",
+      "owner": "Calibration mission loader and phase1 manifest validation",
+      "status": "UNIT_VERIFIED_ONLY",
+      "runtime_evidence": "Final300 was not read or changed.",
+      "unit_evidence": "Final-test manifest rejection tests.",
+      "risk": "INFO",
+      "required_before_v6": false
+    },
+    {
+      "component": "AWAC Online Seam",
+      "owner": "planning.awac.interaction.BehaviorSource.AWAC_ONLINE",
+      "status": "MISSING",
+      "runtime_evidence": "No producer path consumes AWAC_ONLINE.",
+      "unit_evidence": "Enum and contract-only coverage.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    },
+    {
+      "component": "Dev Milestone Seam",
+      "owner": "planning.awac.phase1 milestone callbacks",
+      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "runtime_evidence": "No 10K, 25K, or 50K actor milestone ran.",
+      "unit_evidence": "Callback plumbing tests.",
+      "risk": "MEDIUM",
+      "required_before_v6": false
+    }
+  ],
+  "current_semantics": {
+    "parallel_env_protocol_changed": false,
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "telemetry_fallback_used_for_calibration_replay": false,
+    "zero_next_mask_allowed_only_when_terminal": true,
+    "reward_scale_applied_exactly_once": true,
+    "calibration_split_owner": "Deterministic episode-level split in planning.awac.calibration_runtime and CalibrationReplayProducer",
+    "calibration_split_status": "RUNTIME_VERIFIED",
+    "holdout_train_leakage": "RUNTIME_VERIFIED",
+    "critic_update_schedule_owner": "CalibrationReplayProducer._update_critics",
+    "batch_size": 128,
+    "learning_starts": 5000,
+    "updates_per_step": 0.5,
+    "critic_updates_per_env_step": "floor(max(0, replay_size - learning_starts + 1) * updates_per_step)",
+    "first_critic_update_preconditions": "5001 committed training replay rows with batch_size=128, learning_starts=5000, updates_per_step=0.5",
+    "target_update_owner": "AWACLearner.update",
+    "target_update_runtime_path": "Both target critics soft-update after each critic update",
+    "actor_hard_freeze": "RUNTIME_VERIFIED"
+  },
+  "replay_checkpoint": {
+    "replay_append_status": "RUNTIME_VERIFIED",
+    "replay_flush_status": "IMPLEMENTED_NOT_VERIFIED",
+    "checkpoint_transaction_status": "IMPLEMENTED_NOT_VERIFIED",
+    "checkpoint_atomicity_status": "IMPLEMENTED_NOT_VERIFIED",
+    "pass_checkpoint_status": "UNIT_VERIFIED_ONLY",
+    "normal_order": [
+      "Flush replay arrays and metadata",
+      "Construct replay identity from flushed metadata",
+      "Construct checkpoint snapshot",
+      "Write temporary Torch file and replace destination"
+    ],
+    "known_gaps": [
+      "No cross-artifact replay and checkpoint transaction record",
+      "No fsync of checkpoint file and parent directory",
+      "No periodic post-save reload and identity validation",
+      "No crash recovery or rollback between replay flush and checkpoint replacement",
+      "No fresh last checkpoint on KeyboardInterrupt or runtime failure"
+    ]
+  },
+  "holdout_and_gate": {
+    "holdout_window_status": "SEMANTICS_CHANGED_NOT_VERIFIED",
+    "calibration_gate_status": "SEMANTICS_CHANGED_NOT_VERIFIED",
+    "gate_window_accounting_status": "SEMANTICS_CHANGED_NOT_VERIFIED",
+    "corrected_behavior": [
+      "Unavailable or not-ready holdout placeholder is PENDING and excluded from finite metric validation",
+      "Finite immature holdout metrics are PENDING",
+      "NaN or Inf diagnostics are FAIL_DIVERGED"
+    ]
+  },
+  "resume": {
+    "exactness_status": "FAIL",
+    "required_state_count": 23,
+    "restored_state_count": 17,
+    "missing_state_count": 6,
+    "missing_state": [
+      "Raw completed holdout transition records",
+      "Producer RandomState used by replay sampling",
+      "Python global random state",
+      "NumPy global RNG state",
+      "Torch CPU RNG state",
+      "Torch CUDA RNG state"
+    ],
+    "identity_validation": "Fail-closed for contract, mission source, split, replay, topology, and runtime identity; not exact continuation",
+    "rng_restore_status": "MISSING"
+  },
+  "runtime_failure_and_cleanup": {
+    "failure_recovery_status": "UNIT_VERIFIED_ONLY",
+    "keyboard_interrupt_status": "IMPLEMENTED_NOT_VERIFIED",
+    "process_cleanup_status": "UNIT_VERIFIED_ONLY",
+    "global_pkill_used": false,
+    "diagnostic_persistence_gaps": [
+      "Checkpoint save reason",
+      "Interrupted-save phase or traceback",
+      "Durable runtime failure count and worker-failure summary",
+      "Durable confirmation of final replay flush and close outcome",
+      "Raw holdout records needed to reconstruct a gate window"
+    ],
+    "metrics_persistence_status": "IMPLEMENTED_NOT_VERIFIED"
+  },
+  "future_phase_seams": {
+    "standard_awac_handoff_status": "UNIT_VERIFIED_ONLY",
+    "awac_online_seam_status": "MISSING",
+    "dev_milestone_seam_status": "IMPLEMENTED_NOT_VERIFIED",
+    "final300_protection_status": "UNIT_VERIFIED_ONLY"
+  },
+  "counts": {
+    "runtime_verified": 11,
+    "unit_verified_only": 9,
+    "implemented_not_verified": 5,
+    "semantics_changed": 4,
+    "missing": 3,
+    "unknown": 0,
+    "not_applicable": 0,
+    "blocker": 4,
+    "high_risk": 9,
+    "medium_risk": 8,
+    "low_risk": 3,
+    "info": 8,
+    "unknown_critical": 0
+  },
+  "blockers": [
+    "Checkpoint/replay transaction and interrupted-stop path are not crash-safe and recoverable.",
+    "Raw holdout records are absent from resume state, changing post-resume gate-window content.",
+    "Producer, Python, NumPy, Torch CPU, and Torch CUDA RNG states are absent from checkpoints."
+  ],
+  "v6_ready": false,
+  "next_action": "FIX_AWAC_RUNTIME_GAP_BLOCKERS",
+  "test_evidence": {
+    "compileall": "PASS",
+    "focused": {
+      "command_scope": "AWAC runtime, replay, critic, calibration, checkpoint, resume, Phase1, managed-runtime lifecycle, and ParallelEnv",
+      "passed": 136,
+      "skipped": 1,
+      "failed": 0
+    },
+    "full_pytest": {
+      "passed": 758,
+      "skipped": 43,
+      "failed": 8,
+      "environment_failures": 8,
+      "code_eligible_passed": 758,
+      "code_eligible_skipped": 43,
+      "code_eligible_failed": 0,
+      "environment_failure_reason": "Sandbox socket creation raises PermissionError: [Errno 1] Operation not permitted before product-code behavior."
+    }
+  },
+  "negative_assertions": {
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false,
+    "formal_calibration_v6_executed": false,
+    "actor_training_executed": false,
+    "final300_evaluation_executed": false,
+    "commit_created": false
+  }
+}

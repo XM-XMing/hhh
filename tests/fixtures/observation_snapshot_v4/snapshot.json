@@ -1,0 +1,15 @@
+{
+  "observation_ref": {
+    "schema_version": 4,
+    "runtime_instance_id": "worker-00-runtime-test",
+    "episode_id": "episode-54",
+    "reset_id": "reset-54",
+    "state_id": 1514,
+    "depth_id": "depth-1514",
+    "sim_time_ns": 559999987
+  },
+  "state_bytes_hex": "00ff1073746174652d3135313400",
+  "depth_bytes_hex": "0102030405060708090a0b0c0d0e0f10",
+  "snapshot_hash": "a91d4155d93c6dbaddec2b7bf617065c92f04507fd60505cae4845db13684e5a",
+  "msgpack_hex_file": "snapshot.msgpack.hex"
+}

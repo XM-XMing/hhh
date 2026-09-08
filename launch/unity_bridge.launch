@@ -1,0 +1,49 @@
+<launch>
+  <arg name="unity_host" default="127.0.0.1" />
+  <arg name="cmd_port" default="10253" />
+  <arg name="state_port" default="10254" />
+  <arg name="depth_port" default="12254" />
+  <arg name="execution_result_port" default="-1" />
+  <arg name="python_command_port" default="-1" />
+  <arg name="unity_command_port" default="-1" />
+  <arg name="command_runtime_instance_id" default="" />
+  <arg name="observation_snapshot_port" default="-1" />
+  <arg name="python_result_bind_host" default="127.0.0.1" />
+  <arg name="python_result_port" default="-1" />
+  <arg name="python_snapshot_bind_host" default="127.0.0.1" />
+  <arg name="python_snapshot_port" default="-1" />
+  <arg name="flip_depth_vertical" default="true" />
+  <arg name="flip_depth_horizontal" default="false" />
+  <arg name="command_audit_path" default="" />
+  <arg name="execution_result_metrics_path" default="" />
+  <arg name="execution_transport_audit_path" default="" />
+  <arg name="execution_transport_audit_run_id" default="" />
+  <arg name="execution_transport_audit_episode_id" default="-1" />
+  <arg name="execution_transport_audit_unity_runtime_identity" default="" />
+
+  <node pkg="planning" type="unity_bridge_node" name="unity_bridge_node" output="screen">
+    <!-- Load shared defaults first so launch arguments remain authoritative. -->
+    <rosparam file="$(find planning)/config/unity.yaml" command="load" />
+    <param name="unity_host" value="$(arg unity_host)" />
+    <param name="cmd_port" value="$(arg cmd_port)" />
+    <param name="state_port" value="$(arg state_port)" />
+    <param name="depth_port" value="$(arg depth_port)" />
+    <param name="execution_result_port" value="$(arg execution_result_port)" />
+    <param name="python_command_port" value="$(arg python_command_port)" />
+    <param name="unity_command_port" value="$(arg unity_command_port)" />
+    <param name="command_runtime_instance_id" value="$(arg command_runtime_instance_id)" />
+    <param name="observation_snapshot_port" value="$(arg observation_snapshot_port)" />
+    <param name="python_result_bind_host" value="$(arg python_result_bind_host)" />
+    <param name="python_result_port" value="$(arg python_result_port)" />
+    <param name="python_snapshot_bind_host" value="$(arg python_snapshot_bind_host)" />
+    <param name="python_snapshot_port" value="$(arg python_snapshot_port)" />
+    <param name="flip_depth_vertical" value="$(arg flip_depth_vertical)" />
+    <param name="flip_depth_horizontal" value="$(arg flip_depth_horizontal)" />
+    <param name="command_audit_path" value="$(arg command_audit_path)" />
+    <param name="execution_result_metrics_path" value="$(arg execution_result_metrics_path)" />
+    <param name="execution_transport_audit_path" value="$(arg execution_transport_audit_path)" />
+    <param name="execution_transport_audit_run_id" value="$(arg execution_transport_audit_run_id)" />
+    <param name="execution_transport_audit_episode_id" value="$(arg execution_transport_audit_episode_id)" />
+    <param name="execution_transport_audit_unity_runtime_identity" value="$(arg execution_transport_audit_unity_runtime_identity)" />
+  </node>
+</launch>

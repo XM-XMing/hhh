@@ -1,0 +1,53 @@
+# 105-action continuous motion primitive library for XMflight.
+# Coordinate frame: ROS/body, x forward, y left, z up.
+#
+# The two primary motion inputs are target_forward_speed_mps and
+# forward_distance_m. Duration and command-frame count are derived and
+# validated by generate_motion_primitives.py.
+
+dynamics:
+  target_forward_speed_mps: 3.0
+  max_speed_mps: 5.0
+  max_acceleration_mps2: 10.0
+  max_vertical_speed_mps: 1.6
+  max_vertical_acceleration_mps2: 3.5
+  max_yaw_rate_degps: 120.0
+  control_dt_s: 0.02
+
+  # Explicit smoothness contracts. They validate generated commands rather
+  # than changing the trajectory geometry silently.
+  max_speed_step_mps: 0.05
+  max_body_velocity_step_mps: 0.08
+  center_speed_tolerance_mps: 0.01
+
+geometry:
+  forward_distance_m: 1.50
+
+  # 15 horizontal choices x 7 vertical choices = 105 actions.
+  # The reduced lateral/vertical range preserves acceleration and yaw-rate
+  # margin at the shorter 0.50 s primitive duration.
+  lateral_endpoint_samples_m:
+    [-0.45, -0.35625, -0.27, -0.195, -0.13125, -0.0825, -0.0375,
+      0.0,
+      0.0375, 0.0825, 0.13125, 0.195, 0.27, 0.35625, 0.45]
+
+  terminal_heading_samples_deg:
+    [-30, -25, -20, -15, -10, -6, -3,
+       0,
+       3, 6, 10, 15, 20, 25, 30]
+
+  vertical_endpoint_samples_m:
+    [-0.12, -0.08, -0.04, 0.0, 0.04, 0.08, 0.12]
+
+  horizontal_fov_deg: 87.0
+  vertical_fov_deg: 58.0
+  fov_margin_m: 0.10
+  fov_check_min_forward_m: 0.50
+
+collision:
+  inflate_radius_m: 0.35
+  path_check_stride: 1
+
+paths:
+  motion_primitives_npz: "data/motion_primitives/motion_primitives_105.npz"
+  metadata_json: "data/motion_primitives/motion_primitives_105.json"

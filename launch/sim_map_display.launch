@@ -1,0 +1,25 @@
+<launch>
+  <!-- Full-map display mode: publishes the full-resolution map and opens RViz. -->
+  <arg name="map_path" default="data/map_data/forest_point_cloud.bin" />
+  <arg name="frame_id" default="map" />
+  <arg name="convert_unity_to_ros" default="true" />
+  <arg name="color_by_height" default="true" />
+  <arg name="invert_height_color" default="false" />
+  <arg name="color_min_z" default="0.0" />
+  <arg name="color_max_z" default="0.0" />
+  <arg name="rviz" default="true" />
+
+  <include file="$(find planning)/launch/map_loader.launch">
+    <arg name="map_path" value="$(arg map_path)" />
+    <arg name="frame_id" value="$(arg frame_id)" />
+    <arg name="convert_unity_to_ros" value="$(arg convert_unity_to_ros)" />
+    <arg name="color_by_height" value="$(arg color_by_height)" />
+    <arg name="invert_height_color" value="$(arg invert_height_color)" />
+    <arg name="color_min_z" value="$(arg color_min_z)" />
+    <arg name="color_max_z" value="$(arg color_max_z)" />
+  </include>
+
+  <group if="$(arg rviz)">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find planning)/rviz/xm_forest.rviz" output="screen" />
+  </group>
+</launch>

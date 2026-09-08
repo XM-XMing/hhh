@@ -1,0 +1,108 @@
+{
+  "schema_id": "rl_phase_1_standard_awac_smoke_v3_and_fast_worker_benchmark_v1",
+  "date": "2026-09-05",
+  "result": "FAIL",
+  "runtime_capability": "PASS",
+  "environment": {
+    "conda": "xm",
+    "workspace": "/home/xm/XM/xm_ws",
+    "root": "/home/xm/XM/xm_ws/src/planning",
+    "ros_setup": "/opt/ros/noetic/setup.bash",
+    "catkin_setup": "/home/xm/XM/xm_ws/devel/setup.bash",
+    "install_used": false
+  },
+  "frozen_identity": {
+    "bc_checkpoint": "data/teach/2026_6w/bc_training/checkpoint_best_soft.pt",
+    "bc_checkpoint_sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2",
+    "formal_start_checkpoint": "data/awac/awac_bc60k_formal_critic_calibration_v6/checkpoint_calibration_pass.pt",
+    "formal_start_checkpoint_sha256": "bb9433d8d9fb2fde2e2148e84a4058c2b328b9d676608d38c00962f821c3d8de",
+    "mpl_contract_sha256": "f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d",
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "unity_player_sha256": "61b963943a41f7bfe7b74d8c301032cd3b092756795bb2fcf25be48d8ee91365",
+    "bridge_sha256": "667c266e96211aabb5a0cd25b8b35b303903d35cbe2d95be8f9d2bbe5e63d789"
+  },
+  "smoke": {
+    "output_dir": "data/awac/smoke/standard_awac_online_w2_v3",
+    "workers": 2,
+    "requested_online_env_steps": 3965,
+    "online_env_steps": 3964,
+    "online_transition_count": 3941,
+    "replay_row_count": 9083,
+    "replay_behavior_source_counts": {
+      "BC_CALIBRATION": 5142,
+      "AWAC_ONLINE": 3941
+    },
+    "completed_episode_count": 359,
+    "critic_update_count": 2042,
+    "actor_update_count": 10,
+    "actor_optimizer_step_count": 10,
+    "actor_state_before_sha256": "07b3b1ae86b6f2b1a4d15fcda7684f08961da8856d10dc78ebb948095b1ca71a",
+    "actor_state_after_sha256": "80d1b3bf39b8515263a9e0d970590467a862c693edd2cf97233ad3d4af479216",
+    "actor_changed": true,
+    "replay_audit": {
+      "status": "PASS",
+      "legacy_replay_transition_count": 0,
+      "privileged_field_count": 0,
+      "reliable_v4_transition_count": 9083,
+      "terminal_count": 336,
+      "nonterminal_count": 8747,
+      "action_dim": 105,
+      "vector_dim": 127
+    },
+    "numeric_scan": {
+      "nan_count": 0,
+      "inf_count": 0,
+      "scope": "persisted replay float arrays"
+    },
+    "summary_validation": "FAIL_MISSING_SUMMARY",
+    "checkpoint_transaction": "FAIL_FAILED_INCOMPLETE",
+    "checkpoint_final_commit": "NOT_ATTEMPTED",
+    "runtime_close": "PASS",
+    "replay_final_flush": "PASS",
+    "runtime_failure_count": 0,
+    "actor_divergence": "NOT_CERTIFIED",
+    "q_divergence": "NOT_CERTIFIED",
+    "retention": "NOT_APPLICABLE_NO_COMMITTED_GENERATION",
+    "cleanup": {
+      "status": "PASS",
+      "owned_runtime_processes_remaining": 0,
+      "owned_listening_ports_remaining": 0
+    },
+    "failure": {
+      "error_type": "ValueError",
+      "error": "standard AWAC progress online transition count mismatch",
+      "transaction_attempt": "data/awac/smoke/standard_awac_online_w2_v3/checkpoint_last.transaction_attempt.json",
+      "diagnostic": "The final payload builder reads snapshot.online_transitions_committed, but checkpoint_snapshot does not expose that top-level field; it falls back to zero while progress records 3941. The fail-closed validator rejects the mismatch."
+    },
+    "source_v6_immutable": true
+  },
+  "benchmark": {
+    "base_checkpoint": "NOT_ESTABLISHED",
+    "base_checkpoint_sha256": "NOT_ESTABLISHED",
+    "w8_executed": false,
+    "w8_eligible": false,
+    "w12_executed": false,
+    "w12_eligible": false,
+    "w12_vs_w8_throughput_delta": "NOT_EXECUTED",
+    "selected_env_workers": "NOT_SELECTED",
+    "selection_reason": "Stage A checkpoint finalization gate failed; Stage B was not authorized."
+  },
+  "scope": {
+    "formal_10k_executed": false,
+    "dev100_evaluation_executed": false,
+    "final300_evaluation_executed": false,
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false,
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "mpl_changed": false,
+    "commit": false
+  },
+  "next_action": "DIAGNOSE_STANDARD_AWAC_SMOKE"
+}

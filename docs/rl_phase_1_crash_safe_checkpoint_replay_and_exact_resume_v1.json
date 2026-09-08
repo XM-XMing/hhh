@@ -1,0 +1,161 @@
+{
+  "report_id": "RL_PHASE_1_CRASH_SAFE_CHECKPOINT_REPLAY_AND_EXACT_RESUME_V1",
+  "status": "PASS",
+  "root": "/home/xm/XM/xm_ws/src/planning",
+  "workspace": "/home/xm/XM/xm_ws",
+  "scope": "Critic Calibration checkpoint, replay transaction, interruption recovery, and exact resume only",
+  "blocker_4": "Interrupt Cleanup",
+  "blocker_4_in_scope": true,
+  "owners": {
+    "checkpoint_transaction": "planning.awac.checkpoint.commit_calibration_checkpoint_transaction",
+    "replay_transaction": "planning.awac.replay.AWACReplayBuffer.activate_calibration_checkpoint_generation and restore_calibration_checkpoint_generation",
+    "resume_validator": "planning.awac.checkpoint.validate_exact_calibration_resume_payload and load_committed_calibration_resume_checkpoint",
+    "interrupt_recovery": "planning.awac.trainer._run_online_calibration"
+  },
+  "checkpoint_schema": {
+    "previous": "awac_checkpoint_schema_v2",
+    "current": "awac_checkpoint_schema_v3",
+    "changed": true,
+    "legacy_v1_to_v5_resumable": false,
+    "legacy_disposition": "read-only or fail-closed; no retroactive patch"
+  },
+  "transaction": {
+    "checkpoint_atomic_write": "PASS",
+    "replay_flush_before_checkpoint": "PASS",
+    "checkpoint_replay_transaction": "PASS",
+    "last_known_good_recovery": "PASS",
+    "partial_generation_rejected": "PASS",
+    "generation_artifact": "immutable *.generation-N.pt",
+    "commit_marker": "*.transaction.json written and fsynced last",
+    "diagnostic_sidecar": "*.transaction_attempt.json is not a resume authority",
+    "replay_rollback": "durable pending-generation journal allows only an announced append-only tail",
+    "committed_replay_identity": [
+      "run_identity",
+      "mission_source_sha256",
+      "mission_index_sha256",
+      "replay_size",
+      "replay_position",
+      "replay_total_added",
+      "replay_metadata_sha256",
+      "replay_contract_sha256",
+      "behavior_source_phase"
+    ],
+    "crash_injections": {
+      "A_before_replay_flush": "previous generation only",
+      "B_after_replay_flush": "previous generation only",
+      "C_temporary_checkpoint_before_fsync": "previous generation only",
+      "D_temporary_checkpoint_complete_before_rename": "previous generation only",
+      "E_checkpoint_rename_before_manifest": "previous generation only",
+      "F_after_manifest_commit": "new generation resumable"
+    }
+  },
+  "resume": {
+    "required_state_count": 23,
+    "restored_state_count": 23,
+    "missing_state": [],
+    "exactness_status": "PASS",
+    "required_states": [
+      "actor_parameters",
+      "critic1_parameters",
+      "critic2_parameters",
+      "target_critic1_parameters",
+      "target_critic2_parameters",
+      "actor_optimizer_state",
+      "critic_optimizer_state",
+      "learner_counters_and_frozen_actor_state",
+      "replay_arrays_cursor_and_metadata_identity",
+      "mission_source_identity_and_ordered_ids",
+      "train_holdout_split_identity",
+      "managed_worker_and_runtime_identity",
+      "completed_mission_cursor_and_ids",
+      "environment_and_episode_counters",
+      "gate_history_and_controller_state",
+      "completed_holdout_episode_ids",
+      "runtime_configuration_and_phase_identity",
+      "raw_completed_holdout_transition_records",
+      "producer_replay_sampler_random_state",
+      "python_global_random_state",
+      "numpy_global_random_state",
+      "torch_cpu_random_state",
+      "torch_cuda_random_state"
+    ],
+    "raw_holdout_records_checkpointed": true,
+    "raw_holdout_records_restored_exactly": true,
+    "raw_holdout_hash_roundtrip": "PASS",
+    "producer_rng_restore": "PASS",
+    "python_rng_restore": "PASS",
+    "numpy_rng_restore": "PASS",
+    "torch_cpu_rng_restore": "PASS",
+    "torch_cuda_rng_restore": "PASS",
+    "torch_cuda_real_device_test": "NOT_EXECUTED_CAPABILITY_GATED",
+    "replay_sampler_rng_owner": "CalibrationReplayProducer.rng",
+    "replay_sampler_rng_restore": "PASS",
+    "uninterrupted_vs_resumed_cpu_parity": "PASS",
+    "gate_state_resume_parity": "PASS",
+    "replay_sample_sequence_resume_parity": "PASS",
+    "mission_cursor_resume_parity": "PASS"
+  },
+  "diagnostics": {
+    "checkpoint_save_reason_persistence": "PASS",
+    "interrupted_traceback_persistence": "PASS",
+    "runtime_failure_summary_persistence": "PASS",
+    "final_flush_close_confirmation": "PASS",
+    "normal_fields": [
+      "replay_final_flush",
+      "checkpoint_final_commit",
+      "runtime_close"
+    ]
+  },
+  "gap_readiness_reassessment": {
+    "supersedes": "RL_PHASE_1_END_TO_END_AWAC_RUNTIME_GAP_AUDIT_V1 recovery findings",
+    "replay_flush_status": "PASS",
+    "replay_checkpoint_transaction_status": "PASS",
+    "checkpoint_atomicity_status": "PASS",
+    "resume_exactness_status": "PASS",
+    "rng_restore_status": "PASS",
+    "metrics_persistence_status": "PASS",
+    "remaining_v6_blocker_count": 0,
+    "unknown_critical_count": 0,
+    "v6_ready": true,
+    "runtime_evidence": "NOT_EXECUTED_IN_THIS_TASK"
+  },
+  "test_evidence": {
+    "compileall": "PASS",
+    "focused_awac": {
+      "command": "pytest -q tests/test_awac_*.py",
+      "passed": 135,
+      "skipped": 1,
+      "failed": 0
+    },
+    "full_pytest": {
+      "passed": 775,
+      "skipped": 43,
+      "failed": 8,
+      "environment_failures": 8,
+      "code_eligible_failures": 0,
+      "environment_failure_kind": "PermissionError: [Errno 1] Operation not permitted from sandbox-denied socket.socket"
+    }
+  },
+  "frozen_invariants": {
+    "critic_algorithm_changed": false,
+    "critic_update_schedule_changed": false,
+    "calibration_gate_changed": false,
+    "calibration_gate_thresholds_changed": false,
+    "replay_transition_schema_changed": false,
+    "reward_semantics_changed": false,
+    "actor_update_executed": false,
+    "runtime_executed": false,
+    "formal_calibration_v6_executed": false,
+    "unity_started": false,
+    "bridge_started": false,
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "mpl_changed": false,
+    "commit": false
+  },
+  "next_action": "RUN_HOST_FORMAL_CRITIC_CALIBRATION_V6"
+}

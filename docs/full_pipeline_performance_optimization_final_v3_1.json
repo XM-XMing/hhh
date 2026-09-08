@@ -1,0 +1,152 @@
+{
+  "report": "XMFLIGHT_FULL_PIPELINE_PERFORMANCE_OPTIMIZATION_FINAL_V3_1",
+  "date": "2026-09-01",
+  "status": "FAIL_W20_PROMOTION_NOT_GRANTED",
+  "scope": {
+    "collection_only": true,
+    "formal_60k_executed": false,
+    "formal_100k_missions_executed": false,
+    "bc_training_executed": false,
+    "awac_sac_executed": false,
+    "commit_executed": false,
+    "other_pipeline_worker_config_changed": false
+  },
+  "behavior_audit": {
+    "historical_w20_source_snapshot_available": false,
+    "basis": [
+      "historical_collection_scaling_record",
+      "v3_optimization_ledger",
+      "current_collection_source_seams",
+      "current_w20_runtime_artifact_identity"
+    ],
+    "collection_trajectory_semantics_changed": false,
+    "collection_algorithm_changed": false,
+    "unity_changed": false,
+    "bridge_protocol_changed": false,
+    "bridge_lifecycle_semantics_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "data_layout_changed": false,
+    "allowed_changes_retained": [
+      "disk_preflight",
+      "disk_watchdog",
+      "ENOSPC_graceful_cleanup",
+      "logging_robustness",
+      "resume_diagnostics",
+      "monitoring_and_provenance"
+    ],
+    "smoke_code_version_sha256": "1e253e3bbc7fb8914b92eaa9317743437183281676b9013a40cbff3459c0b2d0"
+  },
+  "contracts": {
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "task_contract_schema_version": 2,
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "max_primitive_steps": 45,
+    "algorithm_changed": false,
+    "data_layout_changed": false,
+    "unity_changed": false,
+    "bridge_protocol_changed": false
+  },
+  "identities": {
+    "unity_player": "/home/xm/XM/xm_ws/src/unity/XMflight.x86_64",
+    "unity_player_sha256": "61b963943a41f7bfe7b74d8c301032cd3b092756795bb2fcf25be48d8ee91365",
+    "unity_assembly_sha256": "319f9e764cf51078d3b5e439214361f54aa9d5726449e26e4c0a1ad6232f21f0",
+    "bridge": "/home/xm/XM/xm_ws/devel/lib/planning/unity_bridge_node",
+    "bridge_sha256": "667c266e96211aabb5a0cd25b8b35b303903d35cbe2d95be8f9d2bbe5e63d789",
+    "voxel_cache_sha256": "a2374091ccc12a26635d0e36294df965fa576bc3efe78066ca7b6cb4a0dd1691",
+    "mpl_contract_sha256": "f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d"
+  },
+  "w20_bounded_smoke": {
+    "output": "/tmp/xm-formal-w20-promotion-v31",
+    "workers_requested": 20,
+    "workers_ready": 20,
+    "workers_finished": 20,
+    "target_accepted": 400,
+    "accepted": 420,
+    "attempted": 469,
+    "accepted_per_second_wall": 0.798889164,
+    "acceptance_rate": 0.895522388,
+    "root_reliable_rows": 12729,
+    "accepted_transition_rows": 12000,
+    "valid_npz": 420,
+    "invalid_npz": 0,
+    "orphan_npz": 0,
+    "duplicate_episode_ids": 0,
+    "duplicate_transition_ids": 0,
+    "physical_port_count": 200,
+    "physical_port_collision_count": 0,
+    "runtime_identity_count": 20,
+    "cross_talk_count": 0,
+    "orphan_process_count": 0,
+    "temporary_partial_file_count": 0,
+    "collector_exit_code": 0,
+    "collection_quality_pass": true,
+    "quality_counters": {
+      "legacy_rows": 0,
+      "telemetry_lookup_count": 0,
+      "snapshot_missing_count": 0,
+      "state_depth_skew_max_ns": 0,
+      "frame_contract_failures": 0,
+      "collector_error_total": 0,
+      "endpoint_identity_chain_valid": true
+    },
+    "load_rollout_episode_validate_true": {
+      "checked": 420,
+      "failed": 0
+    },
+    "resource_monitor": {
+      "samples": 100,
+      "process_count_min": 530,
+      "process_count_max": 681,
+      "unity_rss_min_kib": 21772,
+      "unity_rss_max_kib": 6059752,
+      "bridge_rss_min_kib": 22816,
+      "bridge_rss_max_kib": 1408792,
+      "collector_rss_min_kib": 21772,
+      "collector_rss_max_kib": 56636,
+      "fd_min": 16,
+      "fd_max": 2636,
+      "available_memory_min_gib_spot_observed": 36.399048,
+      "available_memory_full_run_min_gib": null,
+      "swap_used_gib_observed": 0.697266,
+      "monitor_memory_columns_complete": false,
+      "monitor_memory_column_issue": "locale-sensitive free output omitted available and swap fields"
+    },
+    "gates": {
+      "workers_ready_finished": true,
+      "quality_counters_zero": true,
+      "runtime_identity_unique": true,
+      "port_collision_zero": true,
+      "cross_talk_zero": true,
+      "orphan_zero": true,
+      "bridge_stable_bounded": true,
+      "collector_stable_bounded": true,
+      "unity_stable_bounded": true,
+      "system_responsiveness": true,
+      "graceful_cleanup": true,
+      "disk_watchdog": true,
+      "ram_headroom_threshold_observed": true,
+      "ram_headroom_full_run_evidence": false,
+      "swap_zero": false,
+      "promotion_gate": false
+    }
+  },
+  "worker_policy": {
+    "formal_safe_collection_workers": 12,
+    "w20_promotion": false,
+    "other_pipeline_worker_config_changed": false,
+    "v3_commandbook_preserved": true
+  },
+  "tests": {
+    "bounded_collection_validator": "PASS",
+    "all_accepted_npz_validate_true": "PASS",
+    "v3_full_pytest_evidence": "869 passed, 42 skipped, 0 failed",
+    "production_code_changed": false
+  },
+  "artifacts": {
+    "report_markdown": "docs/FULL_PIPELINE_PERFORMANCE_OPTIMIZATION_FINAL_V3_1.md",
+    "commandbook": "docs/FORMAL_TEACHER_TO_BC_END_TO_END_COMMANDS_V3_1.md",
+    "smoke_output": "/tmp/xm-formal-w20-promotion-v31"
+  },
+  "next_action": "keep_collection_workers_12_until_zero_swap_and_complete_resource_monitor_evidence"
+}

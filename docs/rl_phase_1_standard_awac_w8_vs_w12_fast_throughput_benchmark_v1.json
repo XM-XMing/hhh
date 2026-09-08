@@ -1,0 +1,130 @@
+{
+  "benchmark_id": "RL_PHASE_1_STANDARD_AWAC_W8_VS_W12_FAST_THROUGHPUT_BENCHMARK_V1",
+  "status": "PASS",
+  "runtime_capability": {
+    "direct_socket": "PASS",
+    "subprocess_socket": "PASS"
+  },
+  "environment": {
+    "conda_environment": "xm",
+    "ros_setup": "/opt/ros/noetic/setup.bash",
+    "workspace_setup": "/home/xm/XM/xm_ws/devel/setup.bash",
+    "install_used": false,
+    "formal_collection_executed": false,
+    "dev100_executed": false,
+    "final300_executed": false,
+    "commit_created": false
+  },
+  "common_base": {
+    "checkpoint": "data/awac/smoke/standard_awac_online_w2_v4/checkpoint_last.pt",
+    "checkpoint_sha256": "442e16037ea42ea0c8dabab7bcc19a99a3b648a70a6e834c4657ca3d89d6f953",
+    "checkpoint_phase": "awac_training",
+    "starting_online_env_steps": 3964,
+    "starting_online_transitions_committed": 3941,
+    "replay_metadata_sha256": "614d0aa7c109df9e520457cce51736d08918e5edec2322803d310d0cf14d0865",
+    "bc_checkpoint_sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2",
+    "mission_sha256": "a37d60ad024350825c27c36d984a8403d467717f9b326f2d8c7c079d1b33ec9b",
+    "worker_spec_sha256": "75092ab8731833f6ba5a6dbcf41a3b1fcee84cd8056df86c40112b673cd2ae25",
+    "mpl_contract_sha256": "f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d",
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "unity_player_sha256": "61b963943a41f7bfe7b74d8c301032cd3b092756795bb2fcf25be48d8ee91365",
+    "runtime_assembly_sha256": "319f9e764cf51078d3b5e439214361f54aa9d5726449e26e4c0a1ad6232f21f0",
+    "bridge_sha256": "667c266e96211aabb5a0cd25b8b35b303903d35cbe2d95be8f9d2bbe5e63d789",
+    "replay_clones": {
+      "independent_sparse_arrays": true,
+      "committed_prefix_exact": true,
+      "source_npz_or_replay_modified": false
+    }
+  },
+  "resume_budget": {
+    "requested_incremental_steps": 1000,
+    "runner_budget_semantics": "CUMULATIVE_ON_RESUME",
+    "effective_cumulative_budget": 4964,
+    "initial_v1_attempt": {
+      "path": "data/awac/benchmarks/standard_awac_workers_fast_v1/w8",
+      "status": "FAIL_CLOSED_BEFORE_INTERACTION",
+      "error": "Standard AWAC online progress is outside its budget"
+    }
+  },
+  "config_comparison": {
+    "seed": 55,
+    "device": "cuda",
+    "cpu_threads": 1,
+    "only_w8_w12_difference": "env_workers",
+    "w8_resolved_config_sha256": "d1fe638316ef20f106a6dac8e959c93e461ecc17fcc32b3f0192e126a243f5b1",
+    "w12_resolved_config_sha256": "2b25804288d80db1dea6e6908ec114313f287672f31a4ebd1565962cf55005c9"
+  },
+  "runs": {
+    "w8": {
+      "workers": 8,
+      "path": "data/awac/benchmarks/standard_awac_workers_fast_v2/w8",
+      "additional_env_steps": 1000,
+      "additional_committed_transitions": 928,
+      "additional_completed_episodes": 34,
+      "wall_seconds": 121.96838808059692,
+      "committed_transitions_per_sec": 7.608528854105836,
+      "episodes_per_min": 16.725645325836105,
+      "actor_updates_increment": 116,
+      "critic_updates_increment": 464,
+      "acceptance_rate": 0.928,
+      "checkpoint_sha256": "bba5c6b4b1061dc57e41cee669a1daa18e93cd2e91588c2c5ddc900eb890aad5",
+      "checkpoint_transaction": "COMMITTED",
+      "replay_audit": "PASS",
+      "runtime_failure_count": 0,
+      "nan_inf_count": 0,
+      "resource_evidence": {
+        "ram_available_min_gib_observed": 51.0,
+        "swap_used_gib_observed": 1.2,
+        "continuous_peak_rss": "NOT_CAPTURED_VALIDLY",
+        "continuous_peak_process_count": "NOT_CAPTURED_VALIDLY",
+        "sampling_note": "sampler self-matched; manual runtime snapshot retained"
+      }
+    },
+    "w12": {
+      "workers": 12,
+      "path": "data/awac/benchmarks/standard_awac_workers_fast_v2/w12",
+      "additional_env_steps": 996,
+      "additional_committed_transitions": 794,
+      "additional_completed_episodes": 29,
+      "wall_seconds": 102.168386220932,
+      "committed_transitions_per_sec": 7.771484207287275,
+      "episodes_per_min": 17.030708464332317,
+      "actor_updates_increment": 99,
+      "critic_updates_increment": 397,
+      "acceptance_rate": 0.7971887550200804,
+      "checkpoint_sha256": "2cb9ebd24b42954187dc68ef81cff141570d4c688b7d2356078bddebb9cef6f1",
+      "checkpoint_transaction": "COMMITTED",
+      "replay_audit": "PASS",
+      "runtime_failure_count": 0,
+      "nan_inf_count": 0,
+      "resource_evidence": {
+        "sample_count": 13,
+        "ram_available_min_gib": 49.747467041015625,
+        "swap_used_min_gib": 1.177978515625,
+        "swap_used_max_gib": 1.216064453125,
+        "aggregate_tracked_rss_max_gib": 8.2293701171875,
+        "tracked_process_count_max": 88,
+        "tracked_fd_count_max": 2317,
+        "disk_free_min_gib": 141.7848243713379
+      }
+    }
+  },
+  "promotion": {
+    "w12_vs_w8_committed_transition_delta_percent": 2.1417458789487753,
+    "required_delta_percent": 10.0,
+    "selected_workers": 8,
+    "reason": "W12 functional gates pass but throughput promotion threshold is not met",
+    "formal_safe_standard_awac_workers": 8
+  },
+  "contracts_and_algorithm": {
+    "algorithm_changed": false,
+    "trajectory_semantics_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "unity_changed": false,
+    "bridge_protocol_changed": false,
+    "data_layout_changed": false,
+    "source_artifacts_modified": false
+  }
+}

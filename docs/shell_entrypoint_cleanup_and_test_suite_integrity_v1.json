@@ -1,0 +1,249 @@
+{
+  "report": "SHELL_ENTRYPOINT_CLEANUP_AND_TEST_SUITE_INTEGRITY_V1",
+  "schema_version": 1,
+  "date": "2026-09-03",
+  "scope": {
+    "root": "/home/xm/XM/xm_ws/src/planning",
+    "workspace": "/home/xm/XM/xm_ws"
+  },
+  "status": "PASS",
+  "source_shell_count_before": 10,
+  "source_shell_count_after": 7,
+  "rl_awac_sac_production_shell_count": 0,
+  "generic_evaluation_shell_required": true,
+  "deleted_shells": [
+    "scripts/collect_rollouts_parallel.sh",
+    "scripts/run_awac_guarded.sh",
+    "scripts/run_awac_reliable_v4.sh"
+  ],
+  "migrated_shell_logic": [],
+  "shell_inventory": [
+    {
+      "path": "scripts/collect_rollouts_parallel.sh",
+      "role": "legacy compatibility bootstrap",
+      "called_by_before_cleanup": ["CMakeLists.txt", "historical docs", "pre-change tests"],
+      "calls": ["scripts/collect_rollouts_parallel.py"],
+      "python_equivalent": "scripts/collect_rollouts_parallel.py",
+      "decision": "DELETE",
+      "reason": "No unique logic; Python collector is canonical."
+    },
+    {
+      "path": "scripts/evaluate_policy_unity_managed.sh",
+      "role": "managed evaluation lifecycle",
+      "called_by_before_cleanup": ["CMakeLists.txt", "diagnostic shells"],
+      "calls": ["roscore", "Unity", "unity_bridge_node", "scripts/evaluate_policy_unity.py"],
+      "python_equivalent": "scripts/evaluate_policy_unity.py plus managed lifecycle",
+      "decision": "KEEP",
+      "reason": "Owns ROS/Unity/Bridge lifecycle, readiness, cleanup, and publication."
+    },
+    {
+      "path": "scripts/run_awac_guarded.sh",
+      "role": "AWAC thin forwarding wrapper",
+      "called_by_before_cleanup": ["CMakeLists.txt", "historical docs", "pre-change tests"],
+      "calls": ["scripts/train_awac.py"],
+      "python_equivalent": "scripts/train_awac.py",
+      "decision": "DELETE",
+      "reason": "No unique guard or runtime logic remains."
+    },
+    {
+      "path": "scripts/run_awac_reliable_v4.sh",
+      "role": "reliable-v4 thin forwarding wrapper",
+      "called_by_before_cleanup": ["CMakeLists.txt", "historical docs", "pre-change tests"],
+      "calls": ["scripts/train_awac.py --reliable-v4"],
+      "python_equivalent": "scripts/train_awac.py --reliable-v4",
+      "decision": "DELETE",
+      "reason": "The reliable-v4 selector is a Python CLI option."
+    },
+    {
+      "path": "scripts/run_admissible_pairing_audit.sh",
+      "role": "evaluation diagnostic",
+      "called_by_before_cleanup": ["manual diagnostic use"],
+      "calls": ["evaluate_policy_unity_managed.sh", "pairing report parser"],
+      "python_equivalent": "evaluation and diagnostic modules",
+      "decision": "KEEP",
+      "reason": "Diagnostic-only wrapper and not a formal installed trainer."
+    },
+    {
+      "path": "scripts/run_command_tick_audit.sh",
+      "role": "evaluation diagnostic",
+      "called_by_before_cleanup": ["manual diagnostic use"],
+      "calls": ["evaluate_policy_unity_managed.sh", "diagnose_command_tick_audit.py"],
+      "python_equivalent": "evaluation and diagnostic modules",
+      "decision": "KEEP",
+      "reason": "Diagnostic-only wrapper and not a formal installed trainer."
+    },
+    {
+      "path": "scripts/run_cross_mission_t2_baseline_audit.sh",
+      "role": "evaluation diagnostic",
+      "called_by_before_cleanup": ["manual diagnostic use"],
+      "calls": ["evaluate_policy_unity_managed.sh"],
+      "python_equivalent": "evaluation and diagnostic modules",
+      "decision": "KEEP",
+      "reason": "Diagnostic-only wrapper and not a formal installed trainer."
+    },
+    {
+      "path": "scripts/run_cross_mission_t2_risk_screen.sh",
+      "role": "evaluation diagnostic",
+      "called_by_before_cleanup": ["manual diagnostic use"],
+      "calls": ["evaluate_policy_unity_managed.sh", "diagnose_cross_mission_t2_risk_screen.py"],
+      "python_equivalent": "evaluation and diagnostic modules",
+      "decision": "KEEP",
+      "reason": "Diagnostic-only wrapper and not a formal installed trainer."
+    },
+    {
+      "path": "scripts/run_live_pairing_reachability.sh",
+      "role": "evaluation diagnostic",
+      "called_by_before_cleanup": ["manual diagnostic use"],
+      "calls": ["evaluate_policy_unity_managed.sh", "diagnose_live_pairing_reachability.py"],
+      "python_equivalent": "evaluation and diagnostic modules",
+      "decision": "KEEP",
+      "reason": "Diagnostic-only wrapper and not a formal installed trainer."
+    },
+    {
+      "path": "scripts/run_policy_eval_repro.sh",
+      "role": "evaluation diagnostic",
+      "called_by_before_cleanup": ["manual diagnostic use"],
+      "calls": ["evaluate_policy_unity_managed.sh", "diagnose_policy_eval_divergence.py"],
+      "python_equivalent": "evaluation and diagnostic modules",
+      "decision": "KEEP",
+      "reason": "Diagnostic-only wrapper and not a formal installed trainer."
+    }
+  ],
+  "cmake_install": {
+    "installed_shells_after": ["scripts/evaluate_policy_unity_managed.sh"],
+    "installed_obsolete_shell_count": 0,
+    "installed_sac_script_count": 0,
+    "package_xml_changed": false
+  },
+  "formal_entrypoints": {
+    "formal_awac_entrypoint": "scripts/train_awac.py",
+    "formal_policy_eval_entrypoint": "scripts/evaluate_policy_unity.py",
+    "train_awac_py_entrypoint": "PASS",
+    "evaluate_policy_py_entrypoint": "PASS",
+    "audit_awac_replay_py_entrypoint": "PASS",
+    "select_awac_dev_checkpoint_py_entrypoint": "PASS"
+  },
+  "production_scan": {
+    "sac_env_var_production_count": 0,
+    "awac_to_rl_import_count": 0,
+    "awac_to_sac_import_count": 0,
+    "sac_production_file_count": 0,
+    "rl_directory_exists": false,
+    "confidence_algorithm_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false,
+    "critic_calibration_implemented": false
+  },
+  "test_suite_integrity": {
+    "old_full_test_pass_count": 891,
+    "old_full_test_skip_count": 42,
+    "current_pre_audit_pass_count": 680,
+    "current_pre_audit_skip_count": 42,
+    "net_pass_count_drop": 211,
+    "current_pre_cleanup_collected_test_count": 721,
+    "current_pre_cleanup_test_file_count": 115,
+    "intentional_removed_test_cases": 211,
+    "migrated_equivalent_test_cases": 5,
+    "superseded_test_cases": 0,
+    "accidentally_missing_test_cases": 0,
+    "unexplained_test_count": 0,
+    "delta_accounting_note": "211 is the exact net pass-count delta from the two recorded full-suite results. The 28-row mapping is a separate coverage mapping and is not added to this arithmetic.",
+    "reusable_behavior_test_coverage_preserved": true,
+    "final_collected_test_count": 723,
+    "final_test_file_count": 116,
+    "final_full_test_pass_count": 682,
+    "final_full_test_skip_count": 42,
+    "final_full_test_failure_count": 0,
+    "coverage": [
+      {
+        "area": "BC to AWAC",
+        "tests": ["tests/test_awac_handoff_provenance.py", "tests/test_awac_handoff_logits.py", "tests/test_awac_trainer_migration.py"],
+        "preserved": true
+      },
+      {
+        "area": "AWAC model and optimization",
+        "tests": ["tests/test_awac_core.py", "tests/test_awac_model_migration.py", "tests/test_awac_schedule.py", "tests/test_awac_actor_onset.py"],
+        "preserved": true
+      },
+      {
+        "area": "Replay",
+        "tests": ["tests/test_awac_replay_migration.py", "tests/test_awac_replay_transaction.py", "tests/test_awac_replay_audit.py", "tests/test_awac_training_runtime_contract.py"],
+        "preserved": true
+      },
+      {
+        "area": "Runtime",
+        "tests": ["tests/test_parallel_env.py", "tests/test_parallel_terminal_abort_contract.py", "tests/test_reliable_v4_runtime_instance_lifecycle.py", "tests/test_reliable_v4_worker_runtime_spec.py", "tests/test_collection_cli_logging.py"],
+        "preserved": true
+      },
+      {
+        "area": "Checkpoint",
+        "tests": ["tests/test_awac_checkpoint_migration.py", "tests/test_checkpoint_evidence.py", "tests/test_awac_trainer_migration.py"],
+        "preserved": true
+      },
+      {
+        "area": "Evaluation",
+        "tests": ["tests/test_awac_dev_selection.py", "tests/test_evaluator_terminal_abort_contract.py", "tests/test_cli_normalization.py"],
+        "preserved": true
+      },
+      {
+        "area": "Reward",
+        "tests": ["tests/test_reward_contract_migration.py", "tests/contracts/test_task_contract.py"],
+        "preserved": true
+      }
+    ]
+  },
+  "affected_historical_tests": [
+    {"id":"F15","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_dry_run_resolves_disjoint_manifest_without_unity","old_purpose":"guarded SAC dry-run and disjoint manifest","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F16","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_resolves_independent_training_and_full_eval_cadence","old_purpose":"SAC training and full-evaluation cadence","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F17","old_test":"tests/test_sac_guarded_runner_contract.py::test_awac_guarded_wrapper_dry_run_uses_shared_runner_without_unity","old_purpose":"AWAC wrapper over shared SAC runner","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F18","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_keeps_non_aborted_checkpoint_on_normal_resume_path","old_purpose":"normal resume checkpoint preservation","new_equivalent":["tests/test_awac_trainer_migration.py::test_awac_trainer_resume_surface_is_explicit","tests/test_awac_checkpoint_migration.py"],"status":"MIGRATED"},
+    {"id":"F19","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_mismatch_blocks_collection_before_runtime[summary_delta0-success]","old_purpose":"success baseline guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F20","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_mismatch_blocks_collection_before_runtime[summary_delta1-collision]","old_purpose":"collision baseline guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F21","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_mismatch_blocks_collection_before_runtime[summary_delta2-dead_end]","old_purpose":"dead-end baseline guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F22","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_mismatch_blocks_collection_before_runtime[summary_delta3-timeout]","old_purpose":"timeout baseline guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F23","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_mismatch_blocks_collection_before_runtime[summary_delta4-far]","old_purpose":"far baseline guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F24","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_mismatch_blocks_collection_before_runtime[summary_delta5-altitude]","old_purpose":"altitude baseline guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F25","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_evaluator_failure_blocks_collection[PROTOCOL_ERROR]","old_purpose":"baseline protocol-error guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F26","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_baseline_evaluator_failure_blocks_collection[evaluator_failure]","old_purpose":"baseline evaluator-failure guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F27","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_opens_collection_only_after_exact_baseline_sanity","old_purpose":"exact baseline gate ordering","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F28","old_test":"tests/test_sac_guarded_runner_contract.py::test_awac_guarded_runner_refuses_sac_output_directory","old_purpose":"SAC output ownership guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F29","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_rejects_protected_extra_argument[--total-env-steps 7---total-env-steps]","old_purpose":"protected total-env-steps argument","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F30","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_rejects_protected_extra_argument[--env-workers 2---env-workers]","old_purpose":"protected env-workers argument","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F31","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_rejects_protected_extra_argument[--candidate-interaction-rate 0.01---candidate-interaction-rate]","old_purpose":"protected candidate interaction argument","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F32","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_rejects_protected_extra_argument[--actor-trust-batch-size 256---actor-trust-batch-size]","old_purpose":"protected actor trust argument","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F33","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_rejects_protected_extra_argument[--algorithm awac---algorithm]","old_purpose":"protected algorithm selector argument","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F34","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_refuses_state_that_requires_intervention","old_purpose":"old guarded intervention state","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F35","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_skips_unity_for_identical_deployable_policy","old_purpose":"old no-Unity deployable-policy optimization","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F36","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_recovers_only_hash_bound_identical_policy_false_block","old_purpose":"old policy hash recovery guard","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F37","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_requires_two_catastrophic_results_to_block[False]","old_purpose":"old catastrophic-result threshold false case","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"F38","old_test":"tests/test_sac_guarded_runner_contract.py::test_guarded_runner_requires_two_catastrophic_results_to_block[True]","old_purpose":"old catastrophic-result threshold true case","new_equivalent":[],"status":"DELETED_SAC_ONLY"},
+    {"id":"H1","old_test":"tests/test_sac_core.py","old_purpose":"reusable SAC-core model/optimization checks","new_equivalent":["tests/test_awac_core.py","tests/test_awac_model_migration.py"],"status":"MIGRATED"},
+    {"id":"H2","old_test":"tests/test_sac_replay_transaction.py","old_purpose":"transactional replay append and persistence","new_equivalent":["tests/test_awac_replay_transaction.py"],"status":"MIGRATED"},
+    {"id":"H3","old_test":"tests/test_sac_parallel_env.py","old_purpose":"parallel environment construction and lifecycle","new_equivalent":["tests/test_parallel_env.py","tests/test_parallel_terminal_abort_contract.py"],"status":"MIGRATED"},
+    {"id":"H4","old_test":"tests/test_sac_training_contract.py","old_purpose":"training runtime and checkpoint contract","new_equivalent":["tests/test_awac_training_runtime_contract.py","tests/test_awac_trainer_migration.py"],"status":"MIGRATED"}
+  ],
+  "frozen_scope": {
+    "confidence_algorithm_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false,
+    "critic_calibration_implemented": false,
+    "bc_changed": false,
+    "algorithm_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "commit": false,
+    "formal_training_executed": false,
+    "replay_collection_executed": false,
+    "final_evaluation_executed": false
+  },
+  "verification": {
+    "compileall": "PASS",
+    "focused_tests": "PASS",
+    "full_pytest": "PASS",
+    "skip_count_increased": false,
+    "formal_awac_training_started": false,
+    "unity_started": false,
+    "collection_started": false
+  },
+  "next_action": "RL_PHASE_0_AWAC_CONTRACT_AND_CRITIC_CALIBRATION_IMPLEMENTATION"
+}

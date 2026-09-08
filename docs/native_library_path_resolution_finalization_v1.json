@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "report_id": "native_library_path_resolution_finalization_v1",
+  "status": "FAIL_ENVIRONMENT_BLOCKED",
+  "implementation_status": "PASS",
+  "canonical_owner": "planning.native.loader",
+  "native_library_path_owner_count": 1,
+  "direct_native_path_resolver_duplicate_count": 0,
+  "scope": {
+    "root": "/home/xm/XM/xm_ws/src/planning",
+    "workspace": "/home/xm/XM/xm_ws",
+    "development_space": "/home/xm/XM/xm_ws/devel",
+    "install_tree_used": false,
+    "cpp_changed": false,
+    "native_abi_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "awac_changed": false,
+    "bc_changed": false,
+    "teacher_changed": false,
+    "formal_collection_executed": false,
+    "commit": false
+  },
+  "libraries": {
+    "voxel_map": {
+      "filename": "libplanning_voxel_map.so",
+      "environment_override": "PLANNING_VOXEL_MAP_LIBRARY",
+      "auto_path": "/home/xm/XM/xm_ws/devel/lib/libplanning_voxel_map.so",
+      "auto_resolve": "PASS"
+    },
+    "collision": {
+      "filename": "libplanning_collision_checker.so",
+      "environment_override": "PLANNING_COLLISION_LIBRARY",
+      "auto_path": "/home/xm/XM/xm_ws/devel/lib/libplanning_collision_checker.so",
+      "auto_resolve": "PASS"
+    },
+    "global_route": {
+      "filename": "libplanning_global_route.so",
+      "environment_override": "PLANNING_GLOBAL_ROUTE_LIBRARY",
+      "auto_path": "/home/xm/XM/xm_ws/devel/lib/libplanning_global_route.so",
+      "auto_resolve": "PASS"
+    },
+    "depth_safety": {
+      "filename": "libplanning_depth_safety.so",
+      "environment_override": "PLANNING_DEPTH_SAFETY_LIB",
+      "test_override": "PLANNING_DEPTH_SAFETY_TEST_LIBRARY",
+      "auto_path": "/home/xm/XM/xm_ws/devel/lib/libplanning_depth_safety.so",
+      "auto_resolve": "PASS"
+    }
+  },
+  "resolution_contract": {
+    "workspace_auto_detection": "PASS",
+    "explicit_override_precedence": "PASS",
+    "missing_explicit_override_fail_fast": "PASS",
+    "competing_workspace_determinism": "PASS",
+    "install_tree_fallback": "NO",
+    "filesystem_search": "NO",
+    "ctypes_util_find_library": "NO",
+    "environment_override_supported": true,
+    "environment_override_required": false,
+    "depth_safety_test_environment_required": false
+  },
+  "verification": {
+    "compileall": "PASS",
+    "focused_native_test_pass_count": 58,
+    "focused_native_test_failure_count": 0,
+    "voxel_map_native_library_missing_failures": 0,
+    "depth_safety_native_unavailable_failures": 0,
+    "cli_help": {
+      "prepare_teacher_missions.py": "PASS",
+      "collect_rollouts_parallel.py": "PASS",
+      "label_teacher_rollouts.py": "PASS",
+      "generate_depth_action_masks.py": "PASS",
+      "train_awac.py": "PASS",
+      "evaluate_policy_unity.py": "PASS"
+    },
+    "full_pytest": {
+      "passed": 697,
+      "skipped": 42,
+      "failed": 8,
+      "failure_class": "environment_socket_permission",
+      "blocked_modules": [
+        "tests/test_p0_m2_runner_startup.py",
+        "tests/test_p0_m2_single_worker_runner.py"
+      ],
+      "code_eligible_passed": 697,
+      "code_eligible_failed": 0
+    }
+  },
+  "behavior_contract": {
+    "awac_changed": false,
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "trajectory_semantics_changed": false,
+    "python_reference_fallback_added": false
+  },
+  "next_action": "RERUN_UNFILTERED_FULL_PYTEST_WITH_LOOPBACK_PERMISSION_THEN_CERTIFY_RL_PHASE_0_BEFORE_RL_PHASE_1"
+}

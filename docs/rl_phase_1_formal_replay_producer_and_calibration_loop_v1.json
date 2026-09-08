@@ -1,0 +1,85 @@
+{
+  "report_id": "rl_phase_1_formal_replay_producer_and_calibration_loop_v1",
+  "schema_version": 1,
+  "implementation_status": "IMPLEMENTED_PENDING_HOST_RUNTIME_CERTIFICATION",
+  "root": "/home/xm/XM/xm_ws/src/planning",
+  "formal_owner": "planning.awac",
+  "entrypoint": "scripts/train_awac.py",
+  "producer_owner": "planning.awac.calibration_runtime.CalibrationReplayProducer",
+  "parallel_env_owner": "planning.runtime.parallel_env.ParallelEnvPool",
+  "execution": {
+    "runtime_executed": false,
+    "unity_started": false,
+    "bridge_started": false,
+    "formal_calibration_started": false,
+    "actor_update_executed": false,
+    "final300_read": false,
+    "commit": false
+  },
+  "contracts": {
+    "task_contract_schema_version": 2,
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "reward_contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0",
+    "replay_contract_fields": [
+      "depth",
+      "vector",
+      "action_mask",
+      "action",
+      "reward",
+      "next_depth",
+      "next_vector",
+      "next_action_mask",
+      "done",
+      "behavior_source"
+    ],
+    "action_count": 105,
+    "max_primitive_steps": 45,
+    "reward_scale": 0.1,
+    "reward_scale_owner": "learner_bellman_target"
+  },
+  "inputs": {
+    "bc_checkpoint": "data/teach/2026_6w/bc_training/checkpoint_best_soft.pt",
+    "bc_checkpoint_sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2",
+    "training_mission_index": "data/teach/2026_6w/missions.csv",
+    "mpl_contract_sha256": "f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d",
+    "final_test_artifact": "data/test/bc_closed_loop_eval_300",
+    "final_test_protection": "ENFORCED"
+  },
+  "modes": {
+    "fresh_online_calibration": "phase=critic_calibration and train_index and no resume checkpoint",
+    "offline_replay_smoke": "replay_dir without train_index remains supported",
+    "resume": "requires exact mission, split, worker, replay, phase, and contract identity"
+  },
+  "runtime_safety": {
+    "behavior_source": "BC_CALIBRATION",
+    "temperature": 0.0,
+    "actor_update_enabled": false,
+    "privileged_replay_field_count": 0,
+    "actor_global_map_leak_count": 0,
+    "critic_global_map_leak_count": 0,
+    "runtime_failure_replay_drop": true,
+    "terminal_bootstrap": false,
+    "pass_checkpoint_rule": "PASS_ONLY",
+    "pending_checkpoint": "checkpoint_last.pt",
+    "diverged_checkpoint": "checkpoint_last.pt",
+    "default_replay_dir": "<out-dir>/replay"
+  },
+  "verification": {
+    "focused_command": "pytest -q tests/test_awac_formal_calibration_runtime.py tests/test_awac_trainer_migration.py tests/test_awac_critic_calibration.py tests/test_awac_phase1_readiness.py tests/test_awac_phase0_contract.py tests/test_awac_replay_audit.py tests/test_awac_replay_transaction.py",
+    "focused_result": "41 passed",
+    "naming_contract": "PASS",
+    "compileall": "PASS",
+    "full_pytest": "720 passed, 42 skipped, 8 failed",
+    "full_pytest_environment_failure_count": 8,
+    "full_pytest_code_eligible_failure_count": 0,
+    "full_pytest_failure_class": "socket PermissionError: [Errno 1] Operation not permitted in P0-M2 runner tests",
+    "host_runtime": "not executed in Codex environment"
+  },
+  "commands": {
+    "dev100": "scripts/evaluate_policy_unity_managed.sh data/teach/2026_6w/bc_training/checkpoint_best_soft.pt data/test/awac_dev_seed4026_100/missions.csv data/test/awac_dev_seed4026_100/bc60k_baseline 100",
+    "formal_critic_calibration": "python scripts/train_awac.py --phase critic_calibration --bc-checkpoint data/teach/2026_6w/bc_training/checkpoint_best_soft.pt --train-index data/teach/2026_6w/missions.csv --out-dir data/awac/awac_bc60k_formal_critic_calibration_v1 --env-workers 2 --worker-spec-file data/teach/2026_6w/rollouts/worker_runtime_specs.json --reliable-v4 --mpl-contract-sha256 f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d --max-steps 45 --total-env-steps 30000 --calibration-max-transitions 30000 --calibration-max-episodes 1000 --actor-depth-lr 1e-6 --critic-depth-lr 1e-5 --device auto",
+    "replay_audit": "python scripts/audit_awac_replay.py --replay-dir data/awac/awac_bc60k_formal_critic_calibration_v1/replay --output data/awac/awac_bc60k_formal_critic_calibration_v1/replay_audit.json"
+  },
+  "next_action": "RUN_GENERATED_HOST_DEV100_AND_FORMAL_CALIBRATION_COMMANDS"
+}

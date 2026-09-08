@@ -1,0 +1,28 @@
+<launch>
+  <arg name="unity_host" default="127.0.0.1" />
+  <arg name="cmd_port" default="10253" />
+  <arg name="state_port" default="10254" />
+  <arg name="depth_port" default="12254" />
+  <arg name="execution_result_port" default="-1" />
+  <arg name="python_result_bind_host" default="127.0.0.1" />
+  <arg name="python_result_port" default="-1" />
+  <arg name="map_path" default="data/map_data/forest_point_cloud.bin" />
+  <arg name="flip_depth_vertical" default="true" />
+  <arg name="flip_depth_horizontal" default="false" />
+
+  <include file="$(find planning)/launch/unity_bridge.launch">
+    <arg name="unity_host" value="$(arg unity_host)" />
+    <arg name="cmd_port" value="$(arg cmd_port)" />
+    <arg name="state_port" value="$(arg state_port)" />
+    <arg name="depth_port" value="$(arg depth_port)" />
+    <arg name="execution_result_port" value="$(arg execution_result_port)" />
+    <arg name="python_result_bind_host" value="$(arg python_result_bind_host)" />
+    <arg name="python_result_port" value="$(arg python_result_port)" />
+    <arg name="flip_depth_vertical" value="$(arg flip_depth_vertical)" />
+    <arg name="flip_depth_horizontal" value="$(arg flip_depth_horizontal)" />
+  </include>
+
+  <include file="$(find planning)/launch/map_loader.launch">
+    <arg name="map_path" value="$(arg map_path)" />
+  </include>
+</launch>

@@ -1,0 +1,58 @@
+<launch>
+  <!-- Runtime/control mode: no full-resolution map point cloud is loaded. -->
+  <arg name="unity_host" default="127.0.0.1" />
+  <arg name="cmd_port" default="10253" />
+  <arg name="state_port" default="10254" />
+  <arg name="depth_port" default="12254" />
+  <arg name="execution_result_port" default="-1" />
+  <arg name="python_command_port" default="-1" />
+  <arg name="unity_command_port" default="-1" />
+  <arg name="command_runtime_instance_id" default="" />
+  <arg name="observation_snapshot_port" default="-1" />
+  <arg name="python_result_bind_host" default="127.0.0.1" />
+  <arg name="python_result_port" default="-1" />
+  <arg name="python_snapshot_bind_host" default="127.0.0.1" />
+  <arg name="python_snapshot_port" default="-1" />
+  <arg name="flip_depth_vertical" default="true" />
+  <arg name="flip_depth_horizontal" default="false" />
+  <arg name="visualization" default="true" />
+  <arg name="rviz" default="false" />
+  <arg name="command_audit_path" default="" />
+  <arg name="execution_result_metrics_path" default="" />
+  <arg name="execution_transport_audit_path" default="" />
+  <arg name="execution_transport_audit_run_id" default="" />
+  <arg name="execution_transport_audit_episode_id" default="-1" />
+  <arg name="execution_transport_audit_unity_runtime_identity" default="" />
+
+  <include file="$(find planning)/launch/unity_bridge.launch">
+    <arg name="unity_host" value="$(arg unity_host)" />
+    <arg name="cmd_port" value="$(arg cmd_port)" />
+    <arg name="state_port" value="$(arg state_port)" />
+    <arg name="depth_port" value="$(arg depth_port)" />
+    <arg name="execution_result_port" value="$(arg execution_result_port)" />
+    <arg name="python_command_port" value="$(arg python_command_port)" />
+    <arg name="unity_command_port" value="$(arg unity_command_port)" />
+    <arg name="command_runtime_instance_id" value="$(arg command_runtime_instance_id)" />
+    <arg name="observation_snapshot_port" value="$(arg observation_snapshot_port)" />
+    <arg name="python_result_bind_host" value="$(arg python_result_bind_host)" />
+    <arg name="python_result_port" value="$(arg python_result_port)" />
+    <arg name="python_snapshot_bind_host" value="$(arg python_snapshot_bind_host)" />
+    <arg name="python_snapshot_port" value="$(arg python_snapshot_port)" />
+    <arg name="flip_depth_vertical" value="$(arg flip_depth_vertical)" />
+    <arg name="flip_depth_horizontal" value="$(arg flip_depth_horizontal)" />
+    <arg name="command_audit_path" value="$(arg command_audit_path)" />
+    <arg name="execution_result_metrics_path" value="$(arg execution_result_metrics_path)" />
+    <arg name="execution_transport_audit_path" value="$(arg execution_transport_audit_path)" />
+    <arg name="execution_transport_audit_run_id" value="$(arg execution_transport_audit_run_id)" />
+    <arg name="execution_transport_audit_episode_id" value="$(arg execution_transport_audit_episode_id)" />
+    <arg name="execution_transport_audit_unity_runtime_identity" value="$(arg execution_transport_audit_unity_runtime_identity)" />
+  </include>
+
+  <group if="$(arg visualization)">
+    <include file="$(find planning)/launch/visualization.launch" />
+  </group>
+
+  <group if="$(arg rviz)">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find planning)/rviz/xm_runtime.rviz" output="screen" />
+  </group>
+</launch>

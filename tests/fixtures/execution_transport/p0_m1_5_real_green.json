@@ -1,0 +1,37 @@
+{
+  "contract": "P0-M1.5-unity-endpoint-observation-identity-binding",
+  "execution_id": 4435486932233309751,
+  "runtime_instance_id": "worker-00-real-m1",
+  "endpoint_identity": {
+    "endpoint_state_id": 31,
+    "physics_time_ns": 599999986,
+    "depth_id": "depth-31",
+    "capture_time_ns": 607506954,
+    "episode_id": "m1-episode-00",
+    "reset_id": "m1-reset-00",
+    "runtime_instance_id": "worker-00-real-m1"
+  },
+  "unity": {
+    "physical_execution_count": 1,
+    "applied_frame_count": 25,
+    "frame_indices": "0..24 exactly once",
+    "complete_count": 1
+  },
+  "bridge": {
+    "accepted": 1,
+    "ack": 1,
+    "python_relay": 1,
+    "protocol_error": 0
+  },
+  "python": {
+    "result_received": 1,
+    "valid_endpoint": 1,
+    "transition_commit": 1,
+    "replay_append": 1
+  },
+  "historical_red": {
+    "fixture": "tests/fixtures/execution_transport/p0_m1_real_red.json",
+    "first_failing_gate": "endpoint_observation_binding",
+    "nearest_depth_delta_ns": 1224838
+  }
+}

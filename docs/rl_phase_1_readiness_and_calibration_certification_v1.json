@@ -1,0 +1,146 @@
+{
+  "report_id": "rl_phase_1_readiness_and_calibration_certification_v1",
+  "schema_version": 1,
+  "status": "FAIL_BLOCKED_ENVIRONMENT",
+  "root": "/home/xm/XM/xm_ws/src/planning",
+  "host_full_pytest_certification": {
+    "status": "PASS",
+    "passed": 705,
+    "skipped": 42,
+    "failed": 0,
+    "source": "user_supplied_host_certification"
+  },
+  "codex_environment": {
+    "python_environment": "xm",
+    "socket_status": "RESTRICTED",
+    "socket_error": "PermissionError: [Errno 1] Operation not permitted",
+    "cuda_available": false,
+    "unity_started": false,
+    "bridge_started": false
+  },
+  "bc_dev_baseline": {
+    "path": "data/test/awac_dev_seed4026_100/bc60k_baseline/",
+    "manifest": "data/test/awac_dev_seed4026_100/manifest.json",
+    "manifest_role": "DEV",
+    "mission_count": 100,
+    "attempted": 0,
+    "status": "BLOCKED_SOCKET_ENVIRONMENT",
+    "success_count": null,
+    "success_rate": null,
+    "outcomes": {
+      "collision": null,
+      "dead_end": null,
+      "timeout": null,
+      "hard_altitude": null
+    },
+    "reliable_exact_quality": "FAIL_BLOCKED"
+  },
+  "actor_depth_lr": {
+    "current_actor_lr": 1.0e-5,
+    "current_actor_depth_lr_before": 0.0,
+    "candidates": [1.0e-6, 2.5e-6, 5.0e-6],
+    "selected": 1.0e-6,
+    "formal_actor_depth_lr": 1.0e-6,
+    "formal_critic_depth_lr": 1.0e-5,
+    "sanity": "PASS",
+    "selection_rule": "smallest_stable_nonzero_candidate",
+    "artifact": "/tmp/xm-awac-actor-depth-lr-sanity-v2-20260904/actor_depth_lr_sanity.json",
+    "artifact_sha256": "93b236e9d8c8e40be0b701b6918e84dc324787691e298c59aa53f4e7f2e2c1d4"
+  },
+  "calibration": {
+    "gate_state": "PENDING",
+    "certification": "BLOCKED_PENDING",
+    "certification_detail": "formal calibration was not started because loopback sockets are restricted; synthetic smoke remains below the safety cap",
+    "replay_transitions": 160,
+    "episodes": 20,
+    "critic_updates": 8,
+    "holdout_td_loss": 109.96343994140625,
+    "q_mean": -0.7482772469520569,
+    "q_std": 0.3176383376121521,
+    "q_p99": -0.43699167609214784,
+    "twin_disagreement_mean": 2.214468777179718,
+    "twin_disagreement_p95": 3.9950104773044584,
+    "normalized_twin_disagreement": 0.24353810783601798,
+    "holdout_q_return_rank_correlation": 0.0,
+    "success_q_median": null,
+    "failure_q_median": -0.7482772469520569,
+    "success_minus_failure_q_median": null,
+    "smoke_artifact": "/tmp/xm-awac-phase1-calibration-smoke-v2-20260904/checkpoint_calibration.pt",
+    "smoke_artifact_sha256": "11dab8d816823eb8fb7036db1f7732df0ecaea64d6339d153ef06aef8e8cce72"
+  },
+  "phase1_contract": {
+    "id": "awac_phase1_readiness_v1",
+    "sha256": "6a3ae6e650db8e60b693396fbc3ac15bf6f6030c86dcd650dc1b6534a63c4233",
+    "states": ["CRITIC_CALIBRATION", "ACTOR_ENABLED_STANDARD_AWAC", "STOPPED", "DIVERGED"],
+    "milestones": [10000, 25000, 50000],
+    "calibration_max_transitions": 30000,
+    "calibration_max_episodes": 1000,
+    "dev_evaluation_role": "DEV",
+    "collapse_margin": 0.1,
+    "state_machine_implemented": true,
+    "milestone_loop_implemented": true,
+    "dev_evaluation_hook_implemented": true,
+    "final_test_protection": "PASS",
+    "readiness_dry_run": "PASS"
+  },
+  "checkpoint": {
+    "calibration_pass_checkpoint_created": false,
+    "calibration_pass_checkpoint": "checkpoint_calibration_pass.pt",
+    "sha256": null,
+    "resume_dry_run": "NOT_AVAILABLE_NO_PASS_CHECKPOINT",
+    "calibration_actor_unchanged": "YES_FOR_SYNTHETIC_SMOKE",
+    "actor_update_count": 0,
+    "critic1_updated": "YES_FOR_SYNTHETIC_SMOKE",
+    "critic2_updated": "YES_FOR_SYNTHETIC_SMOKE"
+  },
+  "replay_audit": {
+    "status": "PASS",
+    "actor_global_map_leak_count": 0,
+    "critic_global_map_leak_count": 0,
+    "replay_privileged_field_count": 0,
+    "replay_behavior_sources": ["BC_CALIBRATION", "AWAC_ONLINE"]
+  },
+  "forbidden_features": {
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false
+  },
+  "tests": {
+    "compileall": "PASS",
+    "focused_passed": 76,
+    "focused_skipped": 0,
+    "focused_failed": 0,
+    "code_eligible_passed": 706,
+    "code_eligible_skipped": 42,
+    "code_eligible_failed": 0,
+    "full_passed": 706,
+    "full_skipped": 42,
+    "full_failed": 8,
+    "full_failure_class": "socket_permission_restricted_environment",
+    "socket_blocked_modules": [
+      "tests/test_p0_m2_runner_startup.py",
+      "tests/test_p0_m2_single_worker_runner.py"
+    ]
+  },
+  "frozen_flags": {
+    "actor_update_executed": false,
+    "standard_awac_long_training_executed": false,
+    "final_300_evaluation_executed": false,
+    "frozen_final_test_300_modified": false,
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "commit": false
+  },
+  "contracts": {
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "reward_contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0",
+    "replay_contract_sha256": "2b6198b0d295a51687542e475505f85c0d84180a8e529b0c3ea4f84d99c2244f",
+    "bc_checkpoint_sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2"
+  },
+  "next_action": "RUN_ON_SOCKET_ENABLED_HOST_BC_DEV100_BASELINE_THEN_FORMAL_CRITIC_CALIBRATION"
+}

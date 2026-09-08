@@ -1,0 +1,136 @@
+{
+  "schema": "rl_phase_1_managed_calibration_runtime_lifecycle_v1",
+  "status": "PASS_CODE_ONLY_HOST_RUNTIME_REQUIRED",
+  "runtime_executed": false,
+  "formal_calibration_executed": false,
+  "current_failure_root_cause": "ParallelEnvPool was started without a managed per-worker ROS master, Unity Player, or Bridge lifecycle owner.",
+  "owners": {
+    "dev100_managed_runtime": "planning.runtime.managed_runtime.ManagedRuntimePool",
+    "ros_master_launch": "planning.runtime.managed_runtime.ManagedRuntimePool._start_worker_runtime",
+    "unity_launch": "planning.runtime.managed_runtime.ManagedRuntimePool._start_worker_runtime",
+    "bridge_launch": "planning.runtime.managed_runtime.ManagedRuntimePool._start_worker_runtime",
+    "port_allocation": "planning.runtime.ports.WorkerRuntimeSpec",
+    "process_cleanup": "planning.runtime.managed_runtime.ManagedRuntimePool.close",
+    "parallel_python_workers": "planning.runtime.parallel_env.ParallelEnvPool",
+    "owner_count": 1
+  },
+  "contracts": {
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "max_steps": 45,
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "mpl_contract_sha256": "f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d",
+    "critic_algorithm_changed": false,
+    "calibration_gate_changed": false,
+    "replay_contract_changed": false,
+    "actor_update_executed": false
+  },
+  "worker_topology": {
+    "canonical_spec_path": "data/teach/2026_6w/rollouts/worker_runtime_specs.json",
+    "canonical_spec_schema": "p3_worker_runtime_spec_v2",
+    "canonical_worker_count": 20,
+    "calibration_worker_count": 2,
+    "worker_0": {
+      "worker_id": 0,
+      "ros_master_uri": "http://127.0.0.1:11621",
+      "runtime_instance_id": "xmflight-2026_6w-2026_6w_r1-w00",
+      "ros_home": "data/teach/2026_6w/rollouts/ros/worker_00"
+    },
+    "worker_1": {
+      "worker_id": 1,
+      "ros_master_uri": "http://127.0.0.1:11622",
+      "runtime_instance_id": "xmflight-2026_6w-2026_6w_r1-w01",
+      "ros_home": "data/teach/2026_6w/rollouts/ros/worker_01"
+    },
+    "namespace": "/",
+    "isolation": [
+      "ROS_MASTER_URI",
+      "ROS_HOME",
+      "runtime_instance_id",
+      "worker-specific IPC endpoints",
+      "worker-specific environment variables"
+    ]
+  },
+  "startup_order": [
+    "validate canonical worker specs and preflight all ports",
+    "start ROS master",
+    "wait for rosparam list",
+    "start Unity",
+    "start Bridge via roslaunch planning sim_realtime.launch",
+    "wait for /xm/state and /xm/depth/image_raw",
+    "construct and start ParallelEnvPool"
+  ],
+  "readiness": {
+    "ros_master_probe": "rosparam list",
+    "bridge_probe": "rostopic list containing /xm/state and /xm/depth/image_raw",
+    "port_collision": "fail_closed",
+    "startup_failure_cleanup": true,
+    "partial_startup_failure_cleanup": true,
+    "normal_shutdown_cleanup": true,
+    "keyboard_interrupt_cleanup": true,
+    "global_pkill_used": false
+  },
+  "failed_v1": {
+    "run": "data/awac/awac_bc60k_formal_critic_calibration_v1",
+    "classification": "FAILED_STARTUP_ATTEMPT",
+    "replay_size": 0,
+    "replay_total_added": 0,
+    "reliable_v4_transition_count": 0,
+    "critic_update_count": 0,
+    "resumable": false
+  },
+  "verification": {
+    "compileall": "PASS",
+    "managed_runtime_focused_tests": {
+      "passed": 27,
+      "failed": 0
+    },
+    "full_pytest": {
+      "passed": 730,
+      "skipped": 42,
+      "failed": 8,
+      "environment_failures": 8,
+      "code_eligible_failures": 0,
+      "failure_class": "socket PermissionError: [Errno 1] Operation not permitted"
+    },
+    "managed_calibration_startup_smoke": "PASS",
+    "real_runtime": "NOT_EXECUTED_SOCKET_RESTRICTED"
+  },
+  "changed_files": [
+    "python/planning/runtime/managed_runtime.py",
+    "python/planning/awac/trainer.py",
+    "scripts/run_managed_runtime.py",
+    "scripts/evaluate_policy_unity_managed.sh",
+    "tests/test_managed_runtime_lifecycle.py",
+    "tests/test_managed_runtime_integration.py",
+    "tests/contracts/test_contract_naming.py",
+    "docs/RL_PHASE_1_MANAGED_CALIBRATION_RUNTIME_LIFECYCLE_V1.md",
+    "docs/rl_phase_1_managed_calibration_runtime_lifecycle_v1.json"
+  ],
+  "scope": {
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "mpl_changed": false,
+    "formal_replay_producer_semantics_changed": false,
+    "parallel_env_protocol_changed": false,
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false
+  },
+  "host_retry": {
+    "run": "data/awac/awac_bc60k_formal_critic_calibration_v2",
+    "command": [
+      "source /home/xm/anaconda3/etc/profile.d/conda.sh",
+      "conda activate xm",
+      "source /opt/ros/noetic/setup.bash",
+      "source /home/xm/XM/xm_ws/devel/setup.bash",
+      "cd /home/xm/XM/xm_ws/src/planning",
+      "python scripts/train_awac.py --phase critic_calibration --bc-checkpoint data/teach/2026_6w/bc_training/checkpoint_best_soft.pt --train-index data/teach/2026_6w/missions.csv --out-dir data/awac/awac_bc60k_formal_critic_calibration_v2 --env-workers 2 --worker-spec-file data/teach/2026_6w/rollouts/worker_runtime_specs.json --reliable-v4 --mpl-contract-sha256 f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d --max-steps 45 --total-env-steps 30000 --calibration-max-transitions 30000 --calibration-max-episodes 1000 --actor-depth-lr 1e-6 --critic-depth-lr 1e-5 --device auto"
+    ],
+    "manual_ros_unity_bridge_start_required": false
+  },
+  "next_action": "RUN_HOST_FORMAL_CRITIC_CALIBRATION_V2"
+}

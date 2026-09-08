@@ -1,0 +1,185 @@
+{
+  "report": "XMFLIGHT_FULL_PIPELINE_PERFORMANCE_OPTIMIZATION_FINAL_V3",
+  "date": "2026-09-01",
+  "status": "PASS_WITH_FORMAL_DISK_GATE_BLOCKED",
+  "scope": {
+    "workspace": "/home/xm/XM/xm_ws",
+    "root": "/home/xm/XM/xm_ws/src/planning",
+    "python_environment": "xm",
+    "build_system": "catkin_make",
+    "build_prefix": "/home/xm/XM/xm_ws/devel",
+    "install_used": false,
+    "formal_scale_executed": false,
+    "formal_collection_executed": false,
+    "formal_bc_training_executed": false,
+    "awac_sac_executed": false,
+    "commit_executed": false
+  },
+  "contracts": {
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "task_contract_schema_version": 2,
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "max_primitive_steps": 45,
+    "action_count": 105,
+    "algorithm_changed": false,
+    "data_layout_changed": false,
+    "unity_changed": false,
+    "cpp_collision_semantics_changed": false
+  },
+  "identities": {
+    "unity_player": "/home/xm/XM/xm_ws/src/unity/XMflight.x86_64",
+    "unity_player_sha256": "61b963943a41f7bfe7b74d8c301032cd3b092756795bb2fcf25be48d8ee91365",
+    "unity_runtime_assembly_sha256": "319f9e764cf51078d3b5e439214361f54aa9d5726449e26e4c0a1ad6232f21f0",
+    "bridge": "/home/xm/XM/xm_ws/devel/lib/planning/unity_bridge_node",
+    "bridge_sha256": "667c266e96211aabb5a0cd25b8b35b303903d35cbe2d95be8f9d2bbe5e63d789",
+    "mpl_npz_sha256": "22ad22fe66a88633de6effff11c03aa4ca4e8df362f8b410e17effbd91ff7309",
+    "mpl_json_sha256": "c1b795e4737a12034b0d59a1b457f559e7ad138527df2c90ed35db1326e42ea8",
+    "mpl_contract_sha256": "f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d",
+    "voxel_cache_sha256": "a2374091ccc12a26635d0e36294df965fa576bc3efe78066ca7b6cb4a0dd1691"
+  },
+  "benchmark_roots": {
+    "baseline": "data/benchmark/full_pipeline_3k_baseline",
+    "optimized": "data/benchmark/full_pipeline_3k_optimized",
+    "evidence": "/tmp/xm-full-pipeline-opt-20260831"
+  },
+  "stage_wall_seconds": {
+    "baseline": {
+      "motion_primitives": 0.12,
+      "voxel_cache": 3.14,
+      "mission_preparation": 1454.94,
+      "collection": 5466.0,
+      "collection_validation": 3.47,
+      "relabel": 786.64,
+      "depth_masks": 9.12,
+      "dataset_audit": 17.63,
+      "bc_mmap": 30.46,
+      "bc_validation": 3.52,
+      "bc_training_benchmark": 6.58,
+      "measured_total": 7781.62
+    },
+    "optimized": {
+      "motion_primitives": 0.12,
+      "voxel_cache": 3.28,
+      "mission_preparation": 1437.35,
+      "collection": 5457.0,
+      "collection_validation": 4.40,
+      "relabel": 798.50,
+      "depth_masks": 9.26,
+      "dataset_audit": 22.12,
+      "bc_mmap": 22.37,
+      "bc_validation": 4.41,
+      "bc_training_benchmark": 5.22,
+      "measured_total": 7764.03
+    },
+    "measured_total_delta_percent": -0.226
+  },
+  "throughput": {
+    "mission_passing_per_second": {
+      "baseline": 3.436568,
+      "optimized": 3.478624
+    },
+    "collection_accepted_per_second": {
+      "baseline": 0.551226,
+      "optimized": 0.551952
+    },
+    "relabel_transitions_per_second": {
+      "baseline": 109.722,
+      "optimized": 108.056
+    },
+    "depth_mask_transitions_per_second": {
+      "baseline": 9464.035,
+      "optimized": 9317.819
+    },
+    "bc_mmap_transitions_per_second": {
+      "baseline": 2833.618,
+      "optimized": 3857.085
+    },
+    "bc_train_transitions_per_second": {
+      "baseline": 13117.325,
+      "optimized": 16529.310
+    }
+  },
+  "independent_smoke": {
+    "baseline": {
+      "accepted": 3013,
+      "reliable_rows": 92174,
+      "transitions": 86312,
+      "collector_errors": 0,
+      "legacy_rows": 0,
+      "telemetry_lookup": 0,
+      "snapshot_missing": 0,
+      "state_depth_skew_max_ns": 0,
+      "frame_failures": 0,
+      "endpoint_identity_chain": true,
+      "quality_pass": true
+    },
+    "optimized": {
+      "accepted": 3012,
+      "reliable_rows": 92145,
+      "transitions": 86283,
+      "collector_errors": 0,
+      "legacy_rows": 0,
+      "telemetry_lookup": 0,
+      "snapshot_missing": 0,
+      "state_depth_skew_max_ns": 0,
+      "frame_failures": 0,
+      "endpoint_identity_chain": true,
+      "quality_pass": true
+    },
+    "common_episode_count": 3011,
+    "common_episode_array_parity": true,
+    "mission_id_mismatch_on_common": 0,
+    "array_keys_exact": [
+      "soft_targets",
+      "global_action_masks",
+      "teacher_argmax",
+      "behavior_actions",
+      "valid_counts",
+      "teacher_entropies",
+      "local_action_masks"
+    ]
+  },
+  "optimization_decisions": {
+    "bounded_mission_scheduler": "KEEP",
+    "teacher_score_state_fast": "KEEP",
+    "minimal_clearance_collision_experiment": "REVERTED_AFTER_4_95_PERCENT_REGRESSION",
+    "relabel_direct_mmap": "KEEP",
+    "depth_field_selective_direct_mmap": "KEEP",
+    "bc_mmap_single_pass": "KEEP",
+    "bc_validation_fast_and_full": "KEEP",
+    "collection_disk_guard": "KEEP",
+    "bc_throughput_profile": {
+      "batch_size": 256,
+      "num_workers": 8,
+      "prefetch_factor": 4,
+      "status": "MEASURED_SAFE_BOUNDED_PROFILE"
+    }
+  },
+  "release_gates": {
+    "catkin_make_release": true,
+    "compileall": true,
+    "full_pytest_passed": 869,
+    "full_pytest_skipped": 42,
+    "full_pytest_failed": 0,
+    "cli_help": true,
+    "runtime_validation": true,
+    "array_layout_parity": true,
+    "formal_safe_collection_workers": 12,
+    "higher_worker_promotion": false
+  },
+  "disk_gate": {
+    "current_free_bytes": 222901706752,
+    "current_free_gib": 207.55,
+    "estimated_formal_output_decimal_gb": 225.527,
+    "estimated_formal_output_gib": 210.039,
+    "required_free_with_15_gib_margin": 225.039,
+    "recommended_free_with_margin": 303.050,
+    "status": "BLOCKED"
+  },
+  "handoff": {
+    "commandbook": "docs/FORMAL_TEACHER_TO_BC_END_TO_END_COMMANDS_V3.md",
+    "next_stage": "policy evaluation",
+    "rl_status": "FROZEN",
+    "formal_commands_executed": false
+  }
+}

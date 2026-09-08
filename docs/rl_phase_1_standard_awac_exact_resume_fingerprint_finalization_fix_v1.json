@@ -1,0 +1,77 @@
+{
+  "report_id": "rl_phase_1_standard_awac_exact_resume_fingerprint_finalization_fix_v1",
+  "date": "2026-09-05",
+  "result": "PASS",
+  "runtime_executed": false,
+  "unity_started": false,
+  "bridge_started": false,
+  "actor_update_executed": false,
+  "commit": false,
+  "root_cause": {
+    "owner": "planning.awac.checkpoint",
+    "function": "_hash_resume_value",
+    "payload_path": "learner_state.actor_optimizer_state_dict.state[0]",
+    "key_type": "int",
+    "failure": "old stringified mapping key lookup raised KeyError for '0'"
+  },
+  "exact_resume_fingerprint_owner_count": 1,
+  "canonicalization": {
+    "integer_keys": true,
+    "mixed_type_collision_protection": "PASS",
+    "nested_mapping": "PASS",
+    "deterministic_order": "PASS",
+    "unsupported_keys": "FAIL_CLOSED"
+  },
+  "standard_online_resume_missing_state": [],
+  "roundtrip": {
+    "standard_online_checkpoint": "PASS",
+    "fingerprint_before_equals_after": true
+  },
+  "finalization": {
+    "checkpoint_transaction": "PASS",
+    "summary_after_committed_checkpoint": "PASS",
+    "failure_diagnostics_persistence": "PASS",
+    "actor_sha_before_persistence": "PASS",
+    "actor_sha_after_persistence": "PASS",
+    "rolling_checkpoint_retention": 2,
+    "retention_regression": "PASS"
+  },
+  "budget_audit": {
+    "v2_actual": 3964,
+    "v2_budget": 3965,
+    "shortfall_reason": "INFLIGHT_WORKER_WAVE_WOULD_EXCEED_BUDGET",
+    "off_by_one": false,
+    "contract": "PASS"
+  },
+  "v6_calibration_checkpoint_sha256": "bb9433d8d9fb2fde2e2148e84a4058c2b328b9d676608d38c00962f821c3d8de",
+  "v6_calibration_checkpoint_regression": "PASS",
+  "v2_smoke_resumable": false,
+  "next_smoke_dir": "data/awac/smoke/standard_awac_online_w2_v3",
+  "tests": {
+    "focused_pass": 59,
+    "focused_skip": 1,
+    "focused_fail": 0,
+    "standard_online_runtime_pass": 20,
+    "standard_online_runtime_skip": 0,
+    "standard_online_runtime_fail": 0,
+    "full_pass": 815,
+    "full_skip": 43,
+    "full_fail": 0,
+    "compileall": "PASS"
+  },
+  "contracts_changed": {
+    "replay_transition_schema": false,
+    "behavior_source_semantics": false,
+    "reward_semantics": false,
+    "critic_algorithm": false,
+    "actor_algorithm": false,
+    "calibration_gate": false,
+    "bc": false,
+    "unity": false,
+    "bridge": false,
+    "task": false,
+    "observation": false,
+    "reward": false,
+    "mpl": false
+  }
+}

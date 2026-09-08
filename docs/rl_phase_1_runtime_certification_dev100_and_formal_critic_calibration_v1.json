@@ -1,0 +1,174 @@
+{
+  "report_id": "rl_phase_1_runtime_certification_dev100_and_formal_critic_calibration_v1",
+  "schema_version": 1,
+  "status": "FAIL_BLOCKED_ENVIRONMENT",
+  "root": "/home/xm/XM/xm_ws/src/planning",
+  "workspace": "/home/xm/XM/xm_ws",
+  "runtime_capability_gate": {
+    "status": "FAIL_SOCKET_ENVIRONMENT",
+    "first_required_gate": true,
+    "python_environment": "xm",
+    "python_path": "/home/xm/anaconda3/envs/xm/bin/python",
+    "socket_bind": "FAIL",
+    "socket_error": "PermissionError(1, Operation not permitted)",
+    "ros_master_checked": false,
+    "unity_started": false,
+    "bridge_started": false,
+    "dev100_started": false,
+    "formal_calibration_started": false,
+    "runtime_tasks_stopped": true,
+    "business_code_modified_after_gate": false
+  },
+  "contracts": {
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "reward_contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0",
+    "replay_contract_sha256": "2b6198b0d295a51687542e475505f85c0d84180a8e529b0c3ea4f84d99c2244f",
+    "actions": 105,
+    "max_steps": 45,
+    "deployment_safety_mask": "depth",
+    "deployment_execution_mode": "continuous",
+    "phase1_contract_id": "awac_phase1_readiness_v1",
+    "phase1_contract_sha256": "6a3ae6e650db8e60b693396fbc3ac15bf6f6030c86dcd650dc1b6534a63c4233",
+    "calibration_split_sha256": "a0dc1ae4fcca131b8872bf813c40c3fdab6e0b3e68d9681e7474337647c06334"
+  },
+  "bc_checkpoint": {
+    "path": "data/teach/2026_6w/bc_training/checkpoint_best_soft.pt",
+    "sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2",
+    "awac_initialization_parity": "PASS_STATIC_CONTRACT_EVIDENCE"
+  },
+  "frozen_evaluation_artifacts": {
+    "dev_path": "data/test/awac_dev_seed4026_100",
+    "dev_role": "DEV",
+    "dev_mission_count": 100,
+    "dev_manifest_sha256": "831c7904c594065fab5d04fd836021f04eb1447ac93b9c693daca42b618949b8",
+    "final300_path": "data/test/bc_closed_loop_eval_300",
+    "final300_role": "FINAL_TEST_ONLY",
+    "final300_manifest_sha256": "eb61056faf7e1a6dd16509768b29f57f8e79d9e6db56291626eb7affec4c69f4"
+  },
+  "bc_dev_baseline": {
+    "path": "data/test/awac_dev_seed4026_100/bc60k_baseline/",
+    "attempted": 0,
+    "status": "NOT_EXECUTED_SOCKET_GATE",
+    "success_count": null,
+    "success_rate": null,
+    "collision": null,
+    "dead_end": null,
+    "timeout": null,
+    "hard_altitude": null,
+    "other_failure": null,
+    "mean_return": null,
+    "mean_steps": null,
+    "mean_success_steps": null,
+    "decision_time_mean_ms": null,
+    "decision_time_p95_ms": null,
+    "reliable_exact_quality": "NOT_EXECUTED_SOCKET_GATE",
+    "baseline_sha256": null
+  },
+  "calibration": {
+    "formal_run": "awac_bc60k_seed2026_phase1_calibration_v1",
+    "formal_started": false,
+    "gate_state": "PENDING",
+    "certification": "BLOCKED_PENDING",
+    "certification_detail": "formal run blocked by socket capability gate; synthetic smoke below safety cap; cap not reached",
+    "max_transitions": 30000,
+    "max_episodes": 1000,
+    "formal_metrics": null,
+    "synthetic_smoke": {
+      "artifact": "/tmp/xm-awac-phase1-calibration-smoke-v2-20260904/checkpoint_calibration.pt",
+      "artifact_sha256": "11dab8d816823eb8fb7036db1f7732df0ecaea64d6339d153ef06aef8e8cce72",
+      "replay_transitions": 160,
+      "episodes": 20,
+      "critic_updates": 8,
+      "holdout_td_loss": 109.96343994140625,
+      "q_mean": -0.7482772469520569,
+      "q_std": 0.3176383376121521,
+      "q_p01": null,
+      "q_p99": -0.43699167609214784,
+      "twin_disagreement_mean": 2.214468777179718,
+      "twin_disagreement_p95": 3.9950104773044584,
+      "normalized_twin_disagreement": 0.24353810783601798,
+      "holdout_q_return_rank_correlation": 0.0,
+      "success_q_median": null,
+      "failure_q_median": -0.7482772469520569,
+      "success_minus_failure_q_median": null,
+      "actor_unchanged": true,
+      "actor_update_count": 0,
+      "critic1_updated": true,
+      "critic2_updated": true
+    },
+    "actor_depth_lr": 1.0e-6,
+    "critic_depth_lr": 1.0e-5,
+    "actor_unchanged_formal": null,
+    "actor_sha_before": null,
+    "actor_sha_after": null,
+    "pass_checkpoint_created": false,
+    "pass_checkpoint": "checkpoint_calibration_pass.pt",
+    "pass_checkpoint_sha256": null,
+    "resume_dry_run": "FAIL_NO_PASS_CHECKPOINT"
+  },
+  "phase1": {
+    "state_machine_implemented": true,
+    "milestone_loop_implemented": true,
+    "dev_evaluation_hook_implemented": true,
+    "readiness_dry_run": "PASS",
+    "readiness": "FAIL",
+    "readiness_detail": "blocked by runtime capability gate"
+  },
+  "replay_audit": {
+    "status": "PASS",
+    "scope": "static and synthetic smoke only; no formal calibration replay",
+    "actor_global_map_leak_count": 0,
+    "critic_global_map_leak_count": 0,
+    "replay_privileged_field_count": 0
+  },
+  "tests": {
+    "compileall": "PASS",
+    "focused_awac_phase1": {
+      "passed": 76,
+      "skipped": 0,
+      "failed": 0
+    },
+    "host_certification": {
+      "passed": 705,
+      "skipped": 42,
+      "failed": 0,
+      "source": "user_supplied_host_certification"
+    },
+    "codex_sandbox_observation": {
+      "passed": 706,
+      "skipped": 42,
+      "failed": 8,
+      "failure_class": "socket_permission_restricted_environment",
+      "code_eligible_passed": 706,
+      "code_eligible_skipped": 42,
+      "code_eligible_failed": 0,
+      "blocked_modules": [
+        "tests/test_p0_m2_runner_startup.py",
+        "tests/test_p0_m2_single_worker_runner.py"
+      ]
+    }
+  },
+  "frozen_flags": {
+    "actor_update_enabled": false,
+    "standard_awac_long_training_executed": false,
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false,
+    "final_300_evaluation_executed": false,
+    "frozen_final_test_300_modified": false,
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "mpl_changed": false,
+    "commit": false
+  },
+  "report_files": [
+    "docs/RL_PHASE_1_RUNTIME_CERTIFICATION_DEV100_AND_FORMAL_CRITIC_CALIBRATION_V1.md",
+    "docs/rl_phase_1_runtime_certification_dev100_and_formal_critic_calibration_v1.json"
+  ],
+  "next_action": "RUN_ON_SOCKET_ENABLED_HOST_BC_DEV100_BASELINE_THEN_FORMAL_CRITIC_CALIBRATION"
+}

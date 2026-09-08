@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: m.daocloud.io/docker.io/library/postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: recruit
+      POSTGRES_USER: recruit
+      POSTGRES_PASSWORD: recruit
+    ports:
+      - "5432:5432"
+    volumes:
+      - recruit_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recruit -d recruit"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  recruit_pg:

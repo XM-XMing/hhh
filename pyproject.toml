@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=59", "wheel", "catkin-pkg>=0.4"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["python", "."]
+norecursedirs = ["scripts", "data", "build", "devel", "install"]
+addopts = "-ra --strict-markers"
+markers = [
+  "unit: CPU-only test without ROS, Unity, or CUDA",
+  "ros: test requiring a sourced ROS/catkin environment",
+  "unity: test requiring a running Unity simulator",
+  "cuda: test requiring an NVIDIA CUDA device",
+  "performance: non-functional performance regression benchmark",
+]

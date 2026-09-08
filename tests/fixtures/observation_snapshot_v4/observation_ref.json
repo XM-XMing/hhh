@@ -1,0 +1,13 @@
+{
+  "observation_ref": {
+    "schema_version": 4,
+    "runtime_instance_id": "worker-00-runtime-test",
+    "episode_id": "episode-54",
+    "reset_id": "reset-54",
+    "state_id": 1514,
+    "depth_id": "depth-1514",
+    "sim_time_ns": 559999987
+  },
+  "msgpack_hex_file": "observation_ref.msgpack.hex",
+  "payload_sha256": "98a5377a5bafba35c2b4ce54e6b6dd4419fa973bc1abbdc3be212d605dc364dc"
+}

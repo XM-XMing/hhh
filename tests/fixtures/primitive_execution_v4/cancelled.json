@@ -1,0 +1,22 @@
+{
+  "result": {
+    "schema_version": 4,
+    "message_type": "PrimitiveExecutionResult",
+    "runtime_instance_id": "worker-00-runtime-test",
+    "execution_id": 72623859790382856,
+    "status": "CANCELLED",
+    "requested_frame_count": 25,
+    "applied_frame_count": 11,
+    "first_applied_state_id": 7000,
+    "endpoint_state_id": null,
+    "last_applied_frame_index": 10,
+    "reason_code": "STOP",
+    "command_sequence_hash": "82e7f39c8f9bb8b6ea5a42cee108cf1e33a3ee872ba47a51167c4ffd25bed62c",
+    "endpoint_sim_time_ns": null,
+    "endpoint_observation_ref": null,
+    "result_generation": 0
+  },
+  "result_msgpack_hex_file": "cancelled.result_msgpack.hex",
+  "command_sequence_hash": "82e7f39c8f9bb8b6ea5a42cee108cf1e33a3ee872ba47a51167c4ffd25bed62c",
+  "result_payload_hash": "b355903626c10b44c4a1e5fcffeadba92b8ac4a57500b79803e50427f7f06af8"
+}

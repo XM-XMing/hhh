@@ -1,0 +1,20 @@
+# Experiment-level values for the canonical Pre-BC pipeline.
+# Task and algorithm defaults remain owned by their domain modules.
+mission:
+  candidate_count: 2000000
+  seed: 2026
+  max_sampling_attempts: 0
+  max_steps: 45
+  required_passing: 100000
+  route_candidate_factor: 1.15
+  route_workers: 20
+
+label:
+  workers: 20
+
+depth_mask:
+  workers: 20
+
+collection:
+  workers: 20
+  target_accepted: 60000

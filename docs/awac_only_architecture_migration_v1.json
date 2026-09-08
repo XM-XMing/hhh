@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "migration_id": "awac_only_architecture_migration_v1",
+  "status": "PASS",
+  "scope": {
+    "root": "/home/xm/XM/xm_ws/src/planning",
+    "unity_modified": false,
+    "bridge_modified": false,
+    "formal_collection_executed": false,
+    "long_training_executed": false,
+    "commit": false
+  },
+  "formal_owner": "planning.awac",
+  "formal_entrypoint": "scripts/train_awac.py",
+  "structure": {
+    "rl_directory_exists": false,
+    "sac_directory_exists": false,
+    "sac_production_file_count": 0,
+    "rl_directory_production_file_count": 0,
+    "awac_to_rl_import_count": 0,
+    "awac_to_sac_import_count": 0,
+    "sac_alpha_logic_count": 0,
+    "sac_entropy_objective_count": 0,
+    "legacy_candidate_funnel_exists": false,
+    "legacy_trust_gate_exists": false,
+    "legacy_rollback_exists": false
+  },
+  "owners": {
+    "actor": "planning.awac.model",
+    "critic": "planning.awac.model",
+    "replay": "planning.awac.replay",
+    "runtime": "planning.runtime.parallel_env",
+    "checkpoint": ["planning.common.checkpoint", "planning.awac.checkpoint"],
+    "evaluation": "planning.evaluation.policy_evaluator",
+    "reward": "planning.contracts.reward"
+  },
+  "contracts": {
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "task_contract_schema_version": 2,
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "feature_contract_id": "depth_goal_state_prev_action",
+    "vector_dimension": 127,
+    "action_count": 105,
+    "reward_contract_id": "terminal_failure_dominates_progress",
+    "reward_contract_sha256": "1eacab3788e9051e8c77d7c6aeafa2c50bd93dc09434b3adf4985850dd2b62d0",
+    "reward_numeric_parity": "PASS",
+    "bc_v2_to_awac_handoff_contract": "PASS",
+    "bc_awac_initialization_parity": "PASS"
+  },
+  "policy_input_audit": {
+    "actor_global_map_leak_count": 0,
+    "critic_global_map_leak_count": 0,
+    "replay_privileged_field_count": 0,
+    "privileged_critic_input": false,
+    "actor_depth_can_train": true,
+    "critic1_depth_can_train": true,
+    "critic2_depth_can_train": true
+  },
+  "future_owner_seams": {
+    "confidence_owner_ready": true,
+    "confidence_algorithm_implemented": false,
+    "primitive_neighbor_owner_ready": true,
+    "primitive_neighbor_algorithm_implemented": false,
+    "awac_dev_set_status": "MISSING"
+  },
+  "verification": {
+    "compileall": "PASS",
+    "inventory_contract_naming": "PASS",
+    "awac_checkpoint_parse": "PASS",
+    "awac_synthetic_smoke": "PASS",
+    "frozen_final_test_300_modified": false,
+    "full_test_pass_count": 680,
+    "full_test_skip_count": 42,
+    "full_test_failure_count": 0,
+    "unity_started": false,
+    "bridge_started": false
+  },
+  "algorithm_changed": false,
+  "bc_changed": false,
+  "unity_changed": false,
+  "bridge_changed": false,
+  "task_contract_changed": false,
+  "observation_contract_changed": false,
+  "next_action": "RL_PHASE_0_AWAC_CONTRACT_AND_CRITIC_CALIBRATION_IMPLEMENTATION"
+}

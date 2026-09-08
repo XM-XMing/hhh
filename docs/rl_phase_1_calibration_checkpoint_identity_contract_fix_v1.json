@@ -1,0 +1,127 @@
+{
+  "report_id": "rl_phase_1_calibration_checkpoint_identity_contract_fix_v1",
+  "status": "PASS",
+  "root": "/home/xm/XM/xm_ws/src/planning",
+  "scope": "formal_calibration_checkpoint_identity_only",
+  "root_cause": {
+    "reported_failure": "AWAC checkpoint algorithm_id mismatch: received=None expected=discrete_masked_awac",
+    "current_v5_evidence": "Surviving V5 checkpoint_last.pt validates and contains the canonical algorithm ID; no persisted save reason or traceback identifies the historical save kind.",
+    "durable_producer_fix": "Replace overlapping manual standard/calibration identity assembly with one shared builder."
+  },
+  "canonical_algorithm_identity": {
+    "owner": "planning.awac.contract.AWAC_ALGORITHM_ID",
+    "algorithm_id": "discrete_masked_awac",
+    "calibration_phase": "critic_calibration",
+    "calibration_specific_algorithm_id_defined": false
+  },
+  "shared_checkpoint_identity_builder": {
+    "owner": "planning.awac.checkpoint.build_awac_checkpoint_identity",
+    "invariant_field_count": 19,
+    "invariant_fields": [
+      "awac_checkpoint_schema_id",
+      "algorithm_id",
+      "awac_checkpoint_contract_id",
+      "model_type",
+      "training_config_contract_id",
+      "software_version",
+      "feature_contract_id",
+      "policy_input_contract_sha256",
+      "policy_runtime_contract_id",
+      "task_contract_id",
+      "task_contract_sha256",
+      "reward_contract_id",
+      "reward_contract_sha256",
+      "observation_contract",
+      "observation_source",
+      "vec_dim",
+      "num_actions",
+      "depth_history_frames",
+      "initial_prev_action"
+    ],
+    "standard_awac_owner_matches_calibration": true,
+    "calibration_required_identity_missing_count": 0
+  },
+  "calibration_checkpoint_kinds": {
+    "periodic_checkpoint_identity": "PASS",
+    "last_checkpoint_identity": "PASS",
+    "pass_checkpoint_identity": "PASS",
+    "pass_checkpoint_rule": "PASS_ONLY",
+    "phase_state_machine_changed": false
+  },
+  "v5_read_only_audit": {
+    "run": "data/awac/awac_bc60k_formal_critic_calibration_v5",
+    "checkpoint": "checkpoint_last.pt",
+    "checkpoint_validator": "PASS",
+    "replay_transitions": 95,
+    "checkpoint_replay_size": 95,
+    "completed_episodes": 5,
+    "critic_updates": 0,
+    "holdout_episodes": 2,
+    "calibration_gate_state": "FAIL_DIVERGED",
+    "checkpoint_save_reason": "ABSENT",
+    "failed_checkpoint_kind": "UNKNOWN_NO_PERSISTED_SAVE_REASON",
+    "first_real_critic_training_reached": false,
+    "resumable": false,
+    "resume_blocker": "Exact resume requires a PENDING calibration checkpoint; V5 is FAIL_DIVERGED."
+  },
+  "strict_validator_tests": {
+    "calibration_checkpoint_roundtrip": "PASS",
+    "calibration_synthetic_resume_dry_run": "PASS",
+    "missing_algorithm_id_rejected": true,
+    "wrong_algorithm_id_rejected": true,
+    "wrong_contract_identity_rejected": true,
+    "validator_strictness_changed": false
+  },
+  "unchanged": {
+    "bc_checkpoint_identity_changed": false,
+    "bc_changed": false,
+    "critic_algorithm_changed": false,
+    "critic_learning_rate_changed": false,
+    "calibration_gate_changed": false,
+    "calibration_gate_thresholds_changed": false,
+    "replay_contract_changed": false,
+    "replay_sampling_changed": false,
+    "replay_storage_changed": false,
+    "managed_runtime_changed": false,
+    "parallel_env_protocol_changed": false,
+    "calibration_replay_producer_semantics_changed": false,
+    "actor_update_executed": false,
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "mpl_changed": false
+  },
+  "verification": {
+    "compileall": "PASS",
+    "focused_pass_count": 35,
+    "focused_skip_count": 1,
+    "code_eligible_test_failure_count": 0,
+    "full_test_pass_count": 752,
+    "full_test_skip_count": 43,
+    "full_test_failure_count": 8,
+    "full_test_environment_failure_count": 8,
+    "environment_failure_reason": "Codex sandbox denies TCP socket creation with PermissionError: [Errno 1] Operation not permitted."
+  },
+  "runtime_execution": {
+    "runtime_executed": false,
+    "unity_started": false,
+    "bridge_started": false,
+    "commit": false
+  },
+  "next_formal_run": "data/awac/awac_bc60k_formal_critic_calibration_v6",
+  "v6_command": [
+    "source /home/xm/anaconda3/etc/profile.d/conda.sh",
+    "conda activate xm",
+    "source /opt/ros/noetic/setup.bash",
+    "source /home/xm/XM/xm_ws/devel/setup.bash",
+    "cd /home/xm/XM/xm_ws/src/planning",
+    "python scripts/train_awac.py --phase critic_calibration --bc-checkpoint data/teach/2026_6w/bc_training/checkpoint_best_soft.pt --train-index data/teach/2026_6w/missions.csv --out-dir data/awac/awac_bc60k_formal_critic_calibration_v6 --env-workers 2 --worker-spec-file data/teach/2026_6w/rollouts/worker_runtime_specs.json --reliable-v4 --mpl-contract-sha256 f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d --max-steps 45 --total-env-steps 30000 --calibration-max-transitions 30000 --calibration-max-episodes 1000 --actor-depth-lr 1e-6 --critic-depth-lr 1e-5 --device auto"
+  ],
+  "v5_resume_command_present": false
+}
+

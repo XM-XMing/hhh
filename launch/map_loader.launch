@@ -1,0 +1,21 @@
+<launch>
+  <arg name="map_path" default="data/map_data/forest_point_cloud.bin" />
+  <arg name="frame_id" default="map" />
+  <arg name="topic" default="/xm/map_points" />
+  <arg name="convert_unity_to_ros" default="true" />
+  <arg name="color_by_height" default="true" />
+  <arg name="invert_height_color" default="false" />
+  <arg name="color_min_z" default="0.0" />
+  <arg name="color_max_z" default="0.0" />
+
+  <node pkg="planning" type="map_loader_node" name="map_loader_node" output="screen">
+    <param name="map_path" value="$(arg map_path)" />
+    <param name="frame_id" value="$(arg frame_id)" />
+    <param name="topic" value="$(arg topic)" />
+    <param name="convert_unity_to_ros" value="$(arg convert_unity_to_ros)" />
+    <param name="color_by_height" value="$(arg color_by_height)" />
+    <param name="invert_height_color" value="$(arg invert_height_color)" />
+    <param name="color_min_z" value="$(arg color_min_z)" />
+    <param name="color_max_z" value="$(arg color_max_z)" />
+  </node>
+</launch>

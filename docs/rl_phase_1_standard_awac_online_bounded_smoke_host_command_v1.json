@@ -1,0 +1,135 @@
+{
+  "report": "RL_PHASE_1_STANDARD_AWAC_ONLINE_BOUNDED_SMOKE_HOST_COMMAND_V1",
+  "date": "2026-09-05",
+  "status": "FAIL",
+  "scope": {
+    "root": "/home/xm/XM/xm_ws/src/planning",
+    "runtime_executed": false,
+    "socket_capability_probe_executed": false,
+    "ros_master_started": false,
+    "unity_started": false,
+    "bridge_started": false,
+    "standard_awac_online_executed": false,
+    "actor_update_executed": false,
+    "production_actor_update_executed": false,
+    "unit_learner_actor_update_path_exercised": true,
+    "dev100_executed": false,
+    "final300_executed": false,
+    "commit": false
+  },
+  "handoff": {
+    "standard_awac_phase_cli": "awac_training",
+    "standard_awac_phase_state": "ACTOR_ENABLED_STANDARD_AWAC",
+    "standard_awac_handoff_allowed": true,
+    "bc_checkpoint": "data/teach/2026_6w/bc_training/checkpoint_best_soft.pt",
+    "bc_checkpoint_sha256": "ffa23c9fb1951700e1f876959c51124f9514e1cf691952bebf52c7d34a2aabd2",
+    "calibration_pass_checkpoint": "data/awac/awac_bc60k_formal_critic_calibration_v6/checkpoint_calibration_pass.pt",
+    "calibration_pass_checkpoint_sha256": "bb9433d8d9fb2fde2e2148e84a4058c2b328b9d676608d38c00962f821c3d8de",
+    "calibration_replay": "data/awac/awac_bc60k_formal_critic_calibration_v6/replay",
+    "calibration_replay_size": 5142,
+    "calibration_behavior_source_count": 5142,
+    "initial_awac_online_count": 0,
+    "task_contract_sha256": "2c256e920776849a482b05f9478b13bec846b68fefee3dc35febfdfed75bb5df",
+    "observation_contract": "reliable_exact_endpoint_snapshot",
+    "mpl_contract_sha256": "f9188067a93dac1cd89020f0e40e250e9a1b35a1c0687587970faeef2be6c99d"
+  },
+  "cli_audit": {
+    "train_awac_help": "PASS",
+    "audit_awac_replay_help": "PASS",
+    "standard_phase_requires_resume_checkpoint": true,
+    "standard_phase_requires_replay_dir": true,
+    "env_workers_flag": true,
+    "worker_spec_file_flag": true,
+    "reliable_v4_flag": true,
+    "total_env_steps_flag": true,
+    "phase1_online_transition_cap_flag": true,
+    "online_transition_loop": false,
+    "awac_online_runtime_producer": false,
+    "standard_phase_uses_managed_runtime": false,
+    "standard_phase_uses_online_budget": false,
+    "standard_phase_writes_summary_contract": false,
+    "independent_replay_handoff_owner": false
+  },
+  "blockers": [
+    {
+      "id": "STANDARD_ONLINE_LOOP_MISSING",
+      "evidence": "trainer.py Standard branch samples one replay batch, calls learner.update(update_actor=True), saves checkpoint_latest.pt, and exits"
+    },
+    {
+      "id": "AWAC_ONLINE_PRODUCER_MISSING",
+      "evidence": "calibration_runtime.py transition construction uses BehaviorSource.BC_CALIBRATION; no Standard producer appends AWAC_ONLINE rows"
+    },
+    {
+      "id": "ONLINE_BUDGET_NOT_CONSUMED",
+      "evidence": "--total-env-steps is not used by the Standard branch and --phase1-online-transition-cap is only projected into a contract"
+    },
+    {
+      "id": "STANDARD_SUMMARY_CONTRACT_MISSING",
+      "evidence": "the Standard branch prints AWAC_UPDATE=PASS without online counters, objective diagnostics, behavior-source counts, or actor before/after identity"
+    },
+    {
+      "id": "ISOLATED_REPLAY_HANDOFF_MISSING",
+      "evidence": "the current CLI opens the supplied replay for handoff validation; no Standard owner clones the V6 replay and switches its phase before appending online data"
+    }
+  ],
+  "frozen_configuration": {
+    "actor_depth_lr": 1e-6,
+    "actor_head_lr": 1e-5,
+    "actor_vector_lr": 3e-6,
+    "critic_depth_lr": 1e-5,
+    "critic_head_lr": 1e-4,
+    "critic_vector_lr": 1e-5,
+    "gamma": 0.99,
+    "tau": 0.005,
+    "awac_temperature": 2.0,
+    "awac_weight_max": 20.0,
+    "bc_kl_mode": "FIXED",
+    "bc_kl_weight": 0.05,
+    "bc_kl_hard_budget": 0.1,
+    "bc_kl_recovery_weight": 1.0,
+    "critic_cql_weight": 0.05,
+    "gradient_clip_norm": 5.0,
+    "reward_scale": 0.1,
+    "confidence_algorithm_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_algorithm_implemented": false
+  },
+  "smoke": {
+    "workers": 2,
+    "online_transition_budget": 1000,
+    "output_dir": "data/awac/smoke/standard_awac_online_w2_v1",
+    "disk_free_gib_readonly": 138,
+    "disk_preflight": "PASS",
+    "artifact_created": false,
+    "dev100_executed": false,
+    "final300_executed": false
+  },
+  "commands": {
+    "host_standard_awac_w2_smoke_ready": false,
+    "host_standard_awac_w2_replay_audit_ready": false,
+    "host_standard_awac_w2_smoke_summary_ready": false,
+    "host_standard_awac_w2_smoke_mode": "fail_closed_source_guard",
+    "host_standard_awac_w2_replay_audit_cli": "python scripts/audit_awac_replay.py --replay-dir data/awac/smoke/standard_awac_online_w2_v1/replay --output data/awac/smoke/standard_awac_online_w2_v1/replay_audit.json"
+  },
+  "verification": {
+    "compileall": "PASS",
+    "code_eligible_test_pass_count": 561,
+    "code_eligible_test_skip_count": 2,
+    "code_eligible_test_failure_count": 0,
+    "non_unit_tests_deselected": 274,
+    "runtime_tests_executed": false
+  },
+  "boundaries": {
+    "bc_changed": false,
+    "critic_changed": false,
+    "reward_contract_changed": false,
+    "replay_contract_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "mpl_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "commit": false
+  },
+  "next_action": "FIX_STANDARD_AWAC_ONLINE_RUNTIME_BLOCKER"
+}

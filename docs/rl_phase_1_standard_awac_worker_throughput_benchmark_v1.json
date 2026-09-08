@@ -1,0 +1,71 @@
+{
+  "report": "RL_PHASE_1_STANDARD_AWAC_WORKER_THROUGHPUT_BENCHMARK_V1",
+  "date": "2026-09-04",
+  "status": "FAIL",
+  "runtime_capability": "FAIL",
+  "direct_socket": "FAIL",
+  "subprocess_socket": "FAIL",
+  "capability_error": "PermissionError: [Errno 1] Operation not permitted",
+  "benchmark_blocked_by_runtime_capability": true,
+  "runtime_started": false,
+  "process_check": {
+    "owned_runtime_processes_found": 0,
+    "patterns_checked": [
+      "XMflight",
+      "unity_bridge_node",
+      "roscore",
+      "rosmaster",
+      "train_awac"
+    ]
+  },
+  "workers": [
+    {"workers": 2, "status": "NOT_RUN_CAPABILITY_GATE_FAIL", "eligible": false},
+    {"workers": 4, "status": "NOT_RUN_CAPABILITY_GATE_FAIL", "eligible": false},
+    {"workers": 8, "status": "NOT_RUN_CAPABILITY_GATE_FAIL", "eligible": false},
+    {"workers": 12, "status": "NOT_RUN_CAPABILITY_GATE_FAIL", "eligible": false}
+  ],
+  "selection": {
+    "selected_env_workers": null,
+    "selected_worker_reason": "Capability gate failed before benchmark setup",
+    "max_stable_transitions_per_sec": null,
+    "actor_update_count_total_benchmark": null,
+    "critic_update_count_total_benchmark": null,
+    "reliable_exact_quality": "NOT_RUN",
+    "retention_regression": "NOT_RUN",
+    "rolling_checkpoint_max_generations": 2
+  },
+  "storage": {
+    "benchmark_artifacts_created": false,
+    "benchmark_cleanup_dry_run_ready": false,
+    "benchmark_disk_used_gib": null,
+    "free_disk_after": "NOT_MEASURED",
+    "v6_modified": false
+  },
+  "tests": {
+    "pre_bench_pass_count": "NOT_RUN_CAPABILITY_GATE_FAIL",
+    "pre_bench_skip_count": "NOT_RUN_CAPABILITY_GATE_FAIL",
+    "pre_bench_failure_count": "NOT_RUN_CAPABILITY_GATE_FAIL",
+    "post_bench_pass_count": "NOT_RUN_CAPABILITY_GATE_FAIL",
+    "post_bench_skip_count": "NOT_RUN_CAPABILITY_GATE_FAIL",
+    "post_bench_failure_count": "NOT_RUN_CAPABILITY_GATE_FAIL"
+  },
+  "frozen_boundaries": {
+    "calibration_pass_checkpoint_sha256": "bb9433d8d9fb2fde2e2148e84a4058c2b328b9d676608d38c00962f821c3d8de",
+    "benchmark_models_eligible_for_formal_selection": false,
+    "dev100_evaluation_executed": false,
+    "final300_evaluation_executed": false,
+    "confidence_implemented": false,
+    "adaptive_bc_kl_implemented": false,
+    "primitive_neighbor_implemented": false,
+    "algorithm_changed": false,
+    "bc_changed": false,
+    "unity_changed": false,
+    "bridge_changed": false,
+    "task_contract_changed": false,
+    "observation_contract_changed": false,
+    "reward_contract_changed": false,
+    "mpl_changed": false,
+    "commit": false
+  },
+  "next_action": "RERUN BENCHMARK IN A HOST SESSION WITH LOOPBACK SOCKET CAPABILITY"
+}

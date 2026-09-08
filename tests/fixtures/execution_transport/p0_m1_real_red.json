@@ -1,0 +1,33 @@
+{
+  "contract": "P0-M1-real-unity-runtime-result-socket",
+  "execution_id": 4435486932233309751,
+  "runtime_instance_id": "worker-00-real-m1",
+  "old_player_red": {
+    "player_sha256": "61b963943a41f7bfe7b74d8c301032cd3b092756795bb2fcf25be48d8ee91365",
+    "assembly_csharp_sha256": "5d0d49d418657e6d42c37e305ce58821c0a2e46a5bf71024ca6deef114fe2ea2",
+    "error": "Command schema mismatch: 4 != 3"
+  },
+  "candidate_result_path": {
+    "player_sha256": "61b963943a41f7bfe7b74d8c301032cd3b092756795bb2fcf25be48d8ee91365",
+    "assembly_csharp_sha256": "a42c892c9bd0088992cbed81b787d26954597640293cfd757a7cf483b86e5df8",
+    "physical_execution_count": 1,
+    "applied_frame_count": 25,
+    "complete_count": 1,
+    "bridge_accepted": 1,
+    "bridge_ack": 1,
+    "python_relay": 1,
+    "unity_ack_outcome": "ACCEPTED",
+    "python_result_socket_received": 1,
+    "python_transition_commit": 0,
+    "replay_append": 0,
+    "protocol_error": 0
+  },
+  "first_failing_gate": {
+    "name": "endpoint_observation_binding",
+    "endpoint_state_id": "NOT_CAPTURED_IN_ASSERTION",
+    "endpoint_state_time_ns": 559999987,
+    "nearest_depth_time_ns": 561224825,
+    "absolute_delta_ns": 1224838,
+    "decision": "RED; exact timestamp binding required; no nearest/latest fallback"
+  }
+}

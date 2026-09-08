@@ -1,0 +1,79 @@
+{
+  "schema_id": "rl_mainline_implementation_consistency_fix_and_offline_recertification_v1",
+  "status": "PASS_OFFLINE_ONLY",
+  "evidence_package": {
+    "status": "MISSING_FROM_HOST",
+    "historical_claims": "UNVERIFIED"
+  },
+  "source_changes": {
+    "f01_lr_override": "PASS",
+    "f02_production_offline_input_parity": "PASS",
+    "f03_confidence_matches_plan_actions": "PASS",
+    "f04_confidence_backend_parity": "PASS",
+    "f05_constant_beta_normal_branch_parity": "PASS",
+    "f05_constant_beta_recovery_branch_parity": "PASS",
+    "f06_unsupported_causal_label_removed": "PASS",
+    "f07_metric_definitions_unified": "PASS"
+  },
+  "historical_lr": {
+    "lr03_experiment_actually_applied": false,
+    "standard_awac_10k_v2_dev100": 62,
+    "critic_lr03_10k_v1_dev100": 61,
+    "update_ratio025_10k_v1_dev100": 65,
+    "confidence_adaptive_kl_10k_v1_retry_dev100": 64,
+    "old_results_modified": false
+  },
+  "offline_recertification": {
+    "latest_output": "data/awac/diagnostics/implementation_recertification_v1_run3",
+    "cpu_output": "data/awac/diagnostics/implementation_recertification_v1_run2",
+    "fixed_replay_rows": 5491,
+    "input_parity": "PASS",
+    "model_output_parity": "PASS",
+    "cuda": "PASS",
+    "environment": {
+      "python": "3.8.20",
+      "numpy": "1.24.4",
+      "pytorch": "2.4.1",
+      "cuda_runtime": "11.8",
+      "cuda_device": "NVIDIA GeForce RTX 4060 Ti",
+      "cuda_is_available": true
+    },
+    "training_or_evaluation_executed": false
+  },
+  "confidence_v2": {
+    "contract_id": "awac_twin_q_confidence_v2",
+    "formula_version": "delta_q_uncertainty_exp_v2",
+    "scale_version": "valid_qmin_half_range_or_mad_plus_mean_u_v1",
+    "aggregation": "valid_action_mean",
+    "implementation_choice_not_unique_plan_formula": true
+  },
+  "recovery": {
+    "hard_recovery_formula": "recovery_weight * (bc_kl + trust_tail_penalty)",
+    "adaptive_beta_applied_to_hard_recovery": false,
+    "constant_beta_parity": "PASS"
+  },
+  "boundaries": {
+    "standard_awac_default_math_changed": false,
+    "enabled_innovation_semantics_changed": true,
+    "diagnostic_semantics_changed": true,
+    "task_observation_reward_mpl_unity_bridge_changed": false,
+    "primitive_exploration_enabled": false,
+    "historical_artifacts_modified": false
+  },
+  "execution": {
+    "training_executed": false,
+    "dev100_executed": false,
+    "final300_used": false,
+    "commit": false
+  },
+  "verification": {
+    "compileall": "PASS",
+    "focused_tests_passed": 62,
+    "focused_tests_skipped": 8,
+    "focused_test_failures": 0,
+    "full_pytest_passed": 873,
+    "full_pytest_skipped": 43,
+    "full_pytest_failures": 0
+  },
+  "next_action": "REVIEW_OFFLINE_RECERTIFICATION_AND_FREEZE_ONE_MAINLINE_RUN_CONFIG"
+}
